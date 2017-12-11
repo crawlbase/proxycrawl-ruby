@@ -31,7 +31,7 @@ function log(text) {
 
 fs.readFile(__dirname + '/headless-chrome-onload.js', 'utf8', (err, data) => {
   if (err) {
-    log(err);
+    return; // log(err);
   }
   onloadScript = data;
 });
