@@ -102,8 +102,13 @@ class Chrome extends Browser {
     stats.activeIds.push(this.pid);
 
     if (this.isLambda) {
-      const { client } = await this.findChromeDebugger();
-      this.browser = client;
+      try {
+        const { client } = await this.findChromeDebugger();
+        this.browser = client;
+      } catch (e) {
+        this.generateErrorAtStart('Error couldn\'t load browser on port: ' + this.debuggerPort);
+        return mainPromise;
+      }
     } else {
       let debuggerUrl;
       try {
