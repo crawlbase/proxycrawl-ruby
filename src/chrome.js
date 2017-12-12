@@ -42,6 +42,32 @@ class Chrome extends Browser {
   get log() { return log; }
   get appName() { return 'Chrome'; }
   get killTimeout() { return killTimeout; }
+  get chromeFlags() {
+    return [
+      '--no-sandbox',
+      '--no-zygote',
+      '--disable-breakpad',
+      '--disable-canvas-aa',
+      '--disable-cloud-import',
+      '--disable-gpu-sandbox',
+      '--disable-plugins',
+      '--disable-print-preview',
+      '--disable-renderer-backgrounding',
+      '--disable-smooth-scrolling',
+      '--disable-translate',
+      '--disable-translate-new-ux',
+      '--disable-webgl',
+      '--disable-composited-antialiasing',
+      '--disable-extensions-http-throttling',
+      '--no-default-browser-check',
+      '--no-experiments',
+      '--no-pings',
+      '--prerender-from-omnibox=disabled',
+      '--ipc-connection-timeout=10000',
+      '--media-cache-size=10000000',
+      '--window-size=1918,1071'
+    ];
+  }
 
   cleanProperties() {
     super.cleanProperties();
@@ -69,14 +95,14 @@ class Chrome extends Browser {
     if (this.isLambda) {
       Array.prototype.push.apply(chromeFlags, this.chromeFlags);
     } else {
-      chromeFlags.push('--no-sandbox');
+      Array.prototype.push.apply(chromeFlags, this.chromeFlags);
       if (this.options.xvfb === 'true') {
         chromeFlags.push('--window-size=1920x1080', '--display=' + process.env.DISPLAY);
       } else {
         chromeFlags.push('--headless');
       }
       if (!this.isLinkedIn || !this.options.performLogin) {
-        chromeFlags.push('-disable-background-networking', '-disable-browser-side-navigation', '-disable-client-side-phishing-detection', '-disable-default-apps', '-disable-gpu', '-disable-hang-monitor', '-disable-popup-blocking', '-disable-prompt-on-repost', '-disable-sync', '-disable-web-resources', '-ignore-certificate-errors', '-no-first-run', '-safebrowsing-disable-auto-update', '-use-mock-keychain', '--blink-settings=imagesEnabled=false');
+        chromeFlags.push('--disable-background-networking', '--disable-browser-side-navigation', '--disable-client-side-phishing-detection', '--disable-default-apps', '--disable-gpu', '--disable-hang-monitor', '--disable-popup-blocking', '--disable-prompt-on-repost', '--disable-sync', '--disable-web-resources', '--ignore-certificate-errors', '--no-first-run', '--safebrowsing-disable-auto-update', '--use-mock-keychain', '--blink-settings=imagesEnabled=false');
       }
     }
 
