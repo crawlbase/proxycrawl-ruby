@@ -25,7 +25,7 @@ const blockedUrls = [
 ];
 const chromeCommonFlags = [
   '--no-sandbox',
-  '--no-zygote',
+  // '--no-zygote',
   '--disable-breakpad',
   '--disable-canvas-aa',
   '--disable-cloud-import',
