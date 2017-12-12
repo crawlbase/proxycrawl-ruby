@@ -125,40 +125,12 @@ class Chrome extends Browser {
     this.pid = this.browserInstance.pid.toString();
     stats.activeIds.push(this.pid);
 
-    if (this.isLambda) {
-      try {
-        const { client } = await this.findChromeDebugger();
-        this.browser = client;
-      } catch (e) {
-        this.generateErrorAtStart('Error couldn\'t load browser on port: ' + this.debuggerPort);
-        return mainPromise;
-      }
-    } else {
-      let debuggerUrl;
-      try {
-        debuggerUrl = await this.findChromeDebugger();
-      } catch(e) {
-        this.generateErrorAtStart('Error couldn\'t find debugger url for port: ' + this.debuggerPort);
-        return mainPromise;
-      }
-
-      try {
-        this.browser = await CDP({
-          port: this.debuggerPort,
-          target: debuggerUrl
-        });
-        if (this.options.xvfb === 'false') {
-          const { Target } = this.browser;
-          const { browserContextId } = await Target.createBrowserContext();
-          await Target.createTarget({
-            url: 'about:blank',
-            browserContextId
-          });
-        }
-      } catch (e) {
-        this.generateErrorAtStart('Error when waiting for browser to load: ' + e.message, 'Error when waiting for browser to load');
-        return mainPromise;
-      }
+    try {
+      const { client } = await this.findChromeDebugger();
+      this.browser = client;
+    } catch (e) {
+      this.generateErrorAtStart('Error couldn\'t load browser on port: ' + this.debuggerPort);
+      return mainPromise;
     }
 
     if (detectProxyFail && this.browser !== null && this.browser._ws._socket) {
@@ -178,7 +150,7 @@ class Chrome extends Browser {
       Page.enable(),
       Page.addScriptToEvaluateOnNewDocument({ source: onloadScript }),
       Network.clearBrowserCache(),
-      Network.setUserAgentOverride({ userAgent: this.options.userAgent }),
+      this.userAgentOverridePromise(Network),
       Network.setBlockedURLs({ urls: blockedUrls }),
       this.interceptionEnabledPromise(Network),
       this.linkedInCookiePromise(Network)
@@ -206,32 +178,23 @@ class Chrome extends Browser {
     return mainPromise;
   }
 
-  findChromeDebugger() {
-    return new Promise((resolve, reject) => {
-      const query = () => {
-        return http.get('http://127.0.0.1:' + this.debuggerPort + '/json', (res) => {
-          if (this.executionFinished) {
-            return reject();
-          }
-          let rawData = '';
-          res.on('data', (chunk) => rawData += chunk);
-          res.on('end', () => {
-            try {
-              const parsedData = JSON.parse(rawData);
-              if (!parsedData[0]) {
-                log('webSocketDebuggerUrl couldn\'t be found in: ' + rawData);
-                return reject();
-              }
-              return resolve(parsedData[0].webSocketDebuggerUrl);
-            } catch (e) {
-              log(e.message + rawData);
-              return reject();
-            }
-          });
-        }).on('error', () => setTimeout(() => query(), 1000));
-      };
-      return query();
-    });
+  async findChromeDebugger() {
+    const tries = 100;
+    for (let i = 0; i < tries; i++) {
+      try {
+        const tab = await CDP.New({ host: '127.0.0.1', port: this.debuggerPort });
+        const client = await CDP({ target: tab });
+        return { tab, client };
+      } catch (error) {
+        if ((error.code == 'ECONNREFUSED' || error.code == 'ECONNRESET') && i < tries - 1) {
+          await new Promise((resolve) => setTimeout(() => resolve(), 10));
+          continue;
+        } else {
+          throw error;
+        }
+      }
+    }
+    throw new Error('Unreachable code reached');
   }
 
   addEvents(Network, Page, Runtime, Input) {
@@ -331,6 +294,14 @@ class Chrome extends Browser {
 
   interceptionEnabledPromise(Network) {
     return Network.setRequestInterceptionEnabled({ enabled: true });
+  }
+
+  userAgentOverridePromise(Network) {
+    if (this.options.userAgent) {
+      return Network.setUserAgentOverride({ userAgent: this.options.userAgent });
+    } else {
+      return new Promise((resolve) => resolve());
+    }
   }
 
   proxyTimeoutError(type) {

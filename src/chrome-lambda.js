@@ -48,25 +48,6 @@ class ChromeLambda extends Chrome {
     super.cleanProperties();
   }
 
-  async findChromeDebugger() {
-    const tries = 100;
-    for (let i = 0; i < tries; i++) {
-      try {
-        const tab = await CDP.New({ host: '127.0.0.1', port: this.debuggerPort });
-        const client = await CDP({ target: tab });
-        return { tab, client };
-      } catch (error) {
-        if ((error.code == 'ECONNREFUSED' || error.code == 'ECONNRESET') && i < tries - 1) {
-          await new Promise((resolve) => setTimeout(() => resolve(), 10));
-          continue;
-        } else {
-          throw error;
-        }
-      }
-    }
-    throw new Error('Unreachable code reached');
-  }
-
   interceptionEnabledPromise() {
     return new Promise((resolve) => resolve());
   }
