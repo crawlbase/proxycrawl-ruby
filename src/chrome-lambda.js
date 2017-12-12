@@ -1,4 +1,3 @@
-const CDP = require('chrome-remote-interface');
 const { Chrome } = require('./chrome.js');
 
 class ChromeLambda extends Chrome {

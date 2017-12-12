@@ -1,5 +1,4 @@
 const { spawn } = require('child_process');
-const http = require('http');
 const CDP = require('chrome-remote-interface');
 const fs = require('fs');
 const Browser = require('./browser.js');
