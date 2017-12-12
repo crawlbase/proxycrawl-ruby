@@ -149,6 +149,7 @@ class Chrome extends Browser {
       Page.enable(),
       Page.addScriptToEvaluateOnNewDocument({ source: onloadScript }),
       Network.clearBrowserCache(),
+      Network.clearBrowserCookies(),
       this.userAgentOverridePromise(Network),
       Network.setBlockedURLs({ urls: blockedUrls }),
       this.interceptionEnabledPromise(Network),

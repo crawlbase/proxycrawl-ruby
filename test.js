@@ -5,7 +5,7 @@ let errors = 0;
 function launchChrome() {
   const chromeInstance = new Chrome({
     appPath: chromePath,
-    url: 'https://requestb.in/1gqqjg51',
+    url: 'https://wedibit.com/pro-tester',
     proxy: '167.88.10.42:8012'
   });
 
