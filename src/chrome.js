@@ -23,6 +23,30 @@ const blockedUrls = [
   'https://www.gstatic.com/og/*',
   'https://apis.google.com/*'
 ];
+const chromeCommonFlags = [
+  '--no-sandbox',
+  '--no-zygote',
+  '--disable-breakpad',
+  '--disable-canvas-aa',
+  '--disable-cloud-import',
+  '--disable-gpu-sandbox',
+  '--disable-plugins',
+  '--disable-print-preview',
+  '--disable-renderer-backgrounding',
+  '--disable-smooth-scrolling',
+  '--disable-translate',
+  '--disable-translate-new-ux',
+  '--disable-webgl',
+  '--disable-composited-antialiasing',
+  '--disable-extensions-http-throttling',
+  '--no-default-browser-check',
+  '--no-experiments',
+  '--no-pings',
+  '--prerender-from-omnibox=disabled',
+  '--ipc-connection-timeout=10000',
+  '--media-cache-size=10000000',
+  '--window-size=1918,1071'
+];
 var onloadScript = '';
 
 function log(text) {
@@ -42,32 +66,6 @@ class Chrome extends Browser {
   get log() { return log; }
   get appName() { return 'Chrome'; }
   get killTimeout() { return killTimeout; }
-  get chromeFlags() {
-    return [
-      '--no-sandbox',
-      '--no-zygote',
-      '--disable-breakpad',
-      '--disable-canvas-aa',
-      '--disable-cloud-import',
-      '--disable-gpu-sandbox',
-      '--disable-plugins',
-      '--disable-print-preview',
-      '--disable-renderer-backgrounding',
-      '--disable-smooth-scrolling',
-      '--disable-translate',
-      '--disable-translate-new-ux',
-      '--disable-webgl',
-      '--disable-composited-antialiasing',
-      '--disable-extensions-http-throttling',
-      '--no-default-browser-check',
-      '--no-experiments',
-      '--no-pings',
-      '--prerender-from-omnibox=disabled',
-      '--ipc-connection-timeout=10000',
-      '--media-cache-size=10000000',
-      '--window-size=1918,1071'
-    ];
-  }
 
   cleanProperties() {
     super.cleanProperties();
@@ -95,7 +93,7 @@ class Chrome extends Browser {
     if (this.isLambda) {
       Array.prototype.push.apply(chromeFlags, this.chromeFlags);
     } else {
-      Array.prototype.push.apply(chromeFlags, this.chromeFlags);
+      Array.prototype.push.apply(chromeFlags, chromeCommonFlags);
       if (this.options.xvfb === 'true') {
         chromeFlags.push('--window-size=1920x1080', '--display=' + process.env.DISPLAY);
       } else {
