@@ -5,6 +5,7 @@ class HeadlessBrowser {
 
   /**
    * @param  {object} options
+   * options.stats
    * options.appPath
    * options.url
    * options.proxy

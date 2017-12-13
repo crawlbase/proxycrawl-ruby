@@ -1,7 +1,6 @@
 const { spawn } = require('child_process');
 const CDP = require('chrome-remote-interface');
 const fs = require('fs');
-const stats = require('./stats.js');
 const Browser = require('./browser.js');
 const killTimeout = 60000;
 const detectProxyFail = true;
@@ -60,12 +59,12 @@ class Chrome extends Browser {
   get killTimeout() { return killTimeout; }
   get stats() {
     return {
-      newRequestStart: stats.chromeNewRequestStart,
-      newRequest: stats.chromeNewRequest,
-      responseReady: stats.chromeResponseReady,
-      bodyReady: stats.chromeBodyReady,
-      removeActiveInstance: stats.chromeRemoveActiveInstance,
-      activeIds: []
+      newRequestStart: this.options.stats.chromeNewRequestStart,
+      newRequest: this.options.stats.chromeNewRequest,
+      responseReady: this.options.stats.chromeResponseReady,
+      bodyReady: this.options.stats.chromeBodyReady,
+      removeActiveInstance: this.options.stats.chromeRemoveActiveInstance,
+      activeIds: this.options.stats.chromeActiveIds
     };
   }
 
@@ -86,7 +85,7 @@ class Chrome extends Browser {
       fs.mkdirSync(this.sessionDir);
     } catch (e) { /* if folder exists, do nothing */ }
 
-    stats.chromeNewRequest();
+    this.options.stats.chromeNewRequest();
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
 
     const chromeFlags = ['--proxy-server=http://' + this.options.proxy, '--remote-debugging-port=' + this.debuggerPort, '--profile-directory=Default', '--user-data-dir=' + this.sessionDir];
@@ -123,7 +122,7 @@ class Chrome extends Browser {
       return mainPromise;
     }
     this.pid = this.browserInstance.pid.toString();
-    stats.activeIds.push(this.pid);
+    this.options.stats.chromeActiveIds.push(this.pid);
 
     try {
       const { client } = await this.findChromeDebugger();
@@ -206,7 +205,7 @@ class Chrome extends Browser {
     });
     Network.requestWillBeSent(({ type, redirectResponse }) => {
       if (type === 'Document' && this.response === null && redirectResponse && !this.executionFinished) {
-        stats.chromeResponseReady();
+        this.options.stats.chromeResponseReady();
         this.response = redirectResponse;
         this.responseReceivedResolve();
       } else if (type === 'XHR' && !this.executionFinished && this.options.ajaxWait === 'true') {
@@ -215,7 +214,7 @@ class Chrome extends Browser {
     });
     Network.responseReceived(({ type, response }) => {
       if (type === 'Document' && this.response === null && !this.executionFinished) {
-        stats.chromeResponseReady();
+        this.options.stats.chromeResponseReady();
         this.response = response;
         this.responseReceivedResolve();
       } else if (type === 'XHR' && !this.executionFinished && this.options.ajaxWait === 'true') {
@@ -249,7 +248,7 @@ class Chrome extends Browser {
         return;
       }
       this.body = result.result.value;
-      stats.chromeBodyReady();
+      this.options.stats.chromeBodyReady();
       if (this.isLinkedIn) {
         this.linkedInResponseCode();
       }
@@ -257,7 +256,7 @@ class Chrome extends Browser {
     }).catch((e) => {
       if (this.body === null) {
         this.body = 'Error';
-        stats.chromeBodyReady();
+        this.options.stats.chromeBodyReady();
         this.bodyReceivedResolve();
       }
       log('Error while evaluating outerHTML: ' + e.message);
@@ -276,13 +275,13 @@ class Chrome extends Browser {
         this.response = { status: 999 };
       }
       if (this.response !== null && this.responseReceivedResolve !== null) {
-        stats.chromeResponseReady();
+        this.options.stats.chromeResponseReady();
         this.responseReceivedResolve();
       }
     }).catch((e) => {
       if (this.response === null) {
         this.response = { status: 999 };
-        stats.chromeResponseReady();
+        this.options.stats.chromeResponseReady();
         this.responseReceivedResolve();
       }
       log('Error while evaluating document.location.href: ' + e.message);
@@ -308,10 +307,10 @@ class Chrome extends Browser {
   proxyTimeoutError(type) {
     if (this.executionFinished) { return; }
     if (this.response === null) {
-      stats.chromeResponseReady();
+      this.options.stats.chromeResponseReady();
     }
     if (this.body === null || this.body === '') {
-      stats.chromeBodyReady();
+      this.options.stats.chromeBodyReady();
     }
     this.body = 'Proxy timeout';
     log('Proxy ' + this.options.proxy + ' ' + type + ' timeout');

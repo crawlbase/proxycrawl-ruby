@@ -2,8 +2,18 @@ const { Chrome } = require('./index.js');
 const chromePath = process.platform === 'darwin' ? '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome' : '/usr/bin/google-chrome';
 let errors = 0;
 
+const statsMock = {
+  chromeNewRequestStart: () => {},
+  chromeNewRequest: () => {},
+  chromeResponseReady: () => {},
+  chromeBodyReady: () => {},
+  chromeRemoveActiveInstance: () => {},
+  chromeActiveIds: []
+};
+
 function launchChrome() {
   const chromeInstance = new Chrome({
+    stats: statsMock,
     appPath: chromePath,
     url: 'https://wedibit.com/pro-tester',
     proxy: '167.88.10.42:8012'
@@ -19,7 +29,7 @@ function launchChrome() {
 }
 
 const promises = [];
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 1; i++) {
   promises.push(launchChrome());
 }
 
