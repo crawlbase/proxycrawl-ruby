@@ -3,12 +3,12 @@ const chromePath = process.platform === 'darwin' ? '/Applications/Google\ Chrome
 let errors = 0;
 
 const statsMock = {
-  chromeNewRequestStart: () => {},
-  chromeNewRequest: () => {},
-  chromeResponseReady: () => {},
-  chromeBodyReady: () => {},
-  chromeRemoveActiveInstance: () => {},
-  chromeActiveIds: []
+  browserNewRequestStart: () => {},
+  browserNewRequest: () => {},
+  browserResponseReady: () => {},
+  browserBodyReady: () => {},
+  browserRemoveActiveInstance: () => {},
+  activeIds: []
 };
 
 function launchChrome() {
