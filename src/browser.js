@@ -22,8 +22,9 @@ class HeadlessBrowser {
       this.debuggerPort = getRandomInt(9001, 19998);
     } while (this.debuggerPort === 9222);
     this.sessionDir = `/tmp/${this.appName.toLowerCase()}-headless-${getRandomInt(10, 99999)}`;
+    this.stats = options.stats;
     this.options = options;
-    this.stats.newRequestStart();
+    this.stats.browserNewRequestStart(this.appName);
     this.executionFinished = false;
   }
 
@@ -55,8 +56,8 @@ class HeadlessBrowser {
       this.body = errorMessage;
     }
     this.log(errorMessage);
-    this.stats.responseReady();
-    this.stats.bodyReady();
+    this.stats.browserResponseReady(this.appName);
+    this.stats.browserBodyReady(this.appName);
     this.response = { status: 999 };
     this.finishExecution();
   }
@@ -65,10 +66,10 @@ class HeadlessBrowser {
     if (this.executionFinished) { return; }
     this.log(`Force kill ${this.appName} after ${(this.killTimeout / 1000)}s timeout`);
     if (this.response === null) {
-      this.stats.responseReady();
+      this.stats.browserResponseReady(this.appName);
     }
     if (this.body === null || this.body === '') {
-      this.stats.bodyReady();
+      this.stats.browserBodyReady(this.appName);
     }
     this.body = 'Timeout';
     this.response = { status: 999 };
@@ -84,7 +85,7 @@ class HeadlessBrowser {
     if (this.responseReceivedResolve !== null) { this.responseReceivedResolve(); }
     if (this.additionalBodyResolve && this.additionalBodyResolve !== null) { this.additionalBodyResolve(); }
     this.closeBrowser();
-    this.stats.removeActiveInstance();
+    this.stats.browserRemoveActiveInstance(this.appName);
     let index = this.stats.activeIds.indexOf(this.pid);
     if (index > -1) {
       this.stats.activeIds.splice(index, 1);
