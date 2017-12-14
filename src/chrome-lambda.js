@@ -43,10 +43,6 @@ class ChromeLambda extends Chrome {
     this.isLambda = true;
   }
 
-  cleanProperties() {
-    super.cleanProperties();
-  }
-
   interceptionEnabledPromise() {
     return new Promise((resolve) => resolve());
   }

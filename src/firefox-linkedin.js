@@ -47,8 +47,7 @@ class FirefoxLinkedIn extends Firefox {
         if (this.executionFinished) { return; }
         log('Error visiting linkedin from Google: ' + err.message);
         this.body = 'Error on browser';
-        this.stats.waitingBody--;
-        this.stats.waitingResponse--;
+        this.stats.browserBodyResponseReady(this.appName);
         this.response = { status: 999 };
         this.finishExecution();
       });

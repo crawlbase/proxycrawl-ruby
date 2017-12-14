@@ -1,13 +1,6 @@
 const { Builder } = require('selenium-webdriver');
 const firefoxSelenium = require('selenium-webdriver/firefox');
 const Browser = require('./browser.js');
-const stats = {
-  activeInstances: 0,
-  waitingResponse: 0,
-  waitingBody: 0,
-  activeIds: [],
-  requestsLastSecond: 0
-};
 const killTimeout = 60000;
 
 function log(text) {
@@ -16,7 +9,6 @@ function log(text) {
 
 class Firefox extends Browser {
 
-  get stats() { return stats; }
   get log() { return log; }
   get appName() { return 'Firefox'; }
   get killTimeout() { return killTimeout; }
@@ -41,9 +33,7 @@ class Firefox extends Browser {
     const responseReceivedPromise = new Promise((resolve) => this.responseReceivedResolve = resolve);
     const bodyReceivedPromise = new Promise((resolve) => this.bodyReceivedResolve = resolve);
 
-    stats.activeInstances++;
-    stats.waitingResponse++;
-    stats.waitingBody++;
+    this.stats.browserNewRequest(this.appName);
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
 
     const binary = new firefoxSelenium.Binary();
@@ -134,13 +124,13 @@ class Firefox extends Browser {
     this.driver.getPageSource().then((result) => {
       if (this.executionFinished) { return; }
       this.body = result;
-      stats.waitingBody--;
+      this.stats.browserBodyReady(this.appName);
       this.bodyReceivedResolve();
       this.evaluateResponseCode();
     }).catch((e) => {
       if (this.executionFinished) { return; }
       this.body = 'Error';
-      stats.waitingBody--;
+      this.stats.browserBodyReady(this.appName);
       this.bodyReceivedResolve();
       this.evaluateResponseCode();
       log('Error on getPageSource(): ' + e.message);
@@ -151,7 +141,7 @@ class Firefox extends Browser {
     if (this.executionFinished) { return; }
     if (this.body === 'Error') {
       this.response = { status: 999 };
-      stats.waitingResponse--;
+      this.stats.browserResponseReady(this.appName);
       return this.responseReceivedResolve();
     }
     const locationUrl = await this.driver.getCurrentUrl();
@@ -163,7 +153,7 @@ class Firefox extends Browser {
       await this.linkedInResponseCode();
     }
     if (this.response !== null && this.responseReceivedResolve !== null) {
-      stats.waitingResponse--;
+      this.stats.browserResponseReady(this.appName);
       this.responseReceivedResolve();
     }
   }
@@ -182,4 +172,4 @@ class Firefox extends Browser {
 
 }
 
-module.exports = { Firefox, firefoxStats: stats, log };
+module.exports = { Firefox, log };
