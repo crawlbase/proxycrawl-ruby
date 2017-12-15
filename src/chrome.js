@@ -84,7 +84,7 @@ class Chrome extends Browser {
     } else {
       Array.prototype.push.apply(chromeFlags, chromeCommonFlags);
       if (this.options.xvfb === 'true') {
-        chromeFlags.push('--window-size=1920x1080', '--display=' + process.env.DISPLAY);
+        chromeFlags.push('--window-size=1920x1080', '--display=:99');
       } else {
         chromeFlags.push('--headless');
       }
