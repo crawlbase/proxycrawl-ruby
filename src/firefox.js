@@ -62,7 +62,7 @@ class Firefox extends Browser {
 
     this.driver.get(this.options.url).catch((err) => {
       if (this.executionFinished) { return; }
-      this.generateErrorAtStart('Error when loading the page: ' + err.message, 'Error on browser');
+      this.generateErrorAtStart('Error when loading the page (Proxy: ' + this.options.proxy + '): ' + err.message, 'Error on browser');
     });
     this.addEvents();
 
@@ -108,7 +108,7 @@ class Firefox extends Browser {
       });
     } catch (err) {
       if (this.executionFinished) { return; }
-      this.generateErrorAtStart('Error when loading the page: ' + err.message, 'Error on browser');
+      this.generateErrorAtStart('Error when waiting for page to load (Proxy: ' + this.options.proxy + '): ' + err.message, 'Error on browser');
     }
     if (!this.executionFinished) {
       this.loadEventFired();
