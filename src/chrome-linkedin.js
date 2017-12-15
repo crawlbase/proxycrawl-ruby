@@ -85,7 +85,7 @@ class ChromeLinkedIn extends Chrome {
   linkedInResponseCode() {
     if (this.body.indexOf('Profile Not Found') > -1) {
       this.response = { status: 404 };
-    } else if (this.body.indexOf('id="join-form"') > -1) {
+    } else if (this.body.indexOf('id="join-form"') > -1 || this.body.indexOf('<title>LinkedIn: Log In or Sign Up') > -1) {
       this.response = { status: 504 };
     }
   }
