@@ -1,6 +1,8 @@
+const { exec } = require('child_process');
 const { Builder } = require('selenium-webdriver');
 const firefoxSelenium = require('selenium-webdriver/firefox');
 const Browser = require('./browser.js');
+const { getRandomInt } = require('./utils.js');
 const killTimeout = 60000;
 
 function log(text) {
@@ -37,9 +39,11 @@ class Firefox extends Browser {
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
 
     const binary = new firefoxSelenium.Binary();
+    const randomIdentifier = 'random-' + getRandomInt(0, 999999);
     const firefoxFlags = [
       '-headless',
       '-url', 'about:blank',
+      '-' + randomIdentifier
     ];
     binary.addArguments(firefoxFlags);
     const firefoxOptions = new firefoxSelenium.Options();
@@ -63,6 +67,12 @@ class Firefox extends Browser {
     this.driver.get(this.options.url).catch((err) => {
       if (this.executionFinished) { return; }
       this.generateErrorAtStart('Error when loading the page (Proxy: ' + this.options.proxy + '): ' + err.message, 'Error on browser');
+    });
+    this.findPid(randomIdentifier).then((pid) => {
+      if (pid !== null) {
+        this.pid = pid;
+        this.stats.activeIds.push(this.pid);
+      }
     });
     this.addEvents();
 
@@ -113,6 +123,21 @@ class Firefox extends Browser {
     if (!this.executionFinished) {
       this.loadEventFired();
     }
+  }
+
+  findPid(randomIdentifier) {
+    return new Promise((resolve) => {
+      exec(`ps aux | grep "${randomIdentifier}"`, (error, stdout) => {
+        if (error != null) {
+          return resolve(null); // Always resolve
+        }
+        let matches = stdout.match(/\d+/);
+        if (matches.length > 0) {
+          return resolve(matches[0] * 1);
+        }
+        resolve(null);
+      });
+    });
   }
 
   loadEventFired() {
@@ -167,6 +192,14 @@ class Firefox extends Browser {
       this.driver.quit().catch((e) => {
         log('Error while closing Firefox: ' + e.message);
       });
+    }
+    if (this.pid !== null) {
+      const pid = this.pid * 1;
+      setTimeout(() => {
+        try {
+          process.kill(pid);
+        } catch (e) { /* do nothing */ }
+      }, 3000);
     }
   }
 
