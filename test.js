@@ -51,7 +51,8 @@ function launchFirefoxLinkedIn() {
     stats: statsMock,
     appPath: firefoxPath,
     url: 'https://www.linkedin.com/in/williamhgates/',
-    proxy: '167.88.10.42:8012'
+    proxy: '167.88.10.42:8012',
+    joinWall: 'v=2&AQHglkQ3zcdUfQAAAWBujZJkBAnbPC66mS8a1vwO808N2_UAfaFc5ttUSGpYizHx5jOcPtsc4C_zNeVA5HcTIlTPd-8doo0Q0Vr2EtJEFkEZzQX3A5c0arb6ZPgi9H8fo0Z9IevMcDE3MadCS5A4lREO4w_r31Yw_X4a2X18VozKvQE1yBNwMw'
   });
 
   return instance.start().then((result) => {
