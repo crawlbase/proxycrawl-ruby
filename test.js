@@ -1,4 +1,4 @@
-const { Chrome, Firefox } = require('./index.js');
+const { Chrome, Firefox, FirefoxLinkedIn } = require('./index.js');
 const chromePath = process.platform === 'darwin' ? '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome' : '/usr/bin/google-chrome';
 const firefoxPath = process.platform === 'darwin' ? '/Applications/Firefox.app/Contents/MacOS/firefox' : '/usr/bin/firefox';
 let errors = 0;
@@ -47,7 +47,7 @@ function launchFirefox() {
 }
 
 function launchFirefoxLinkedIn() {
-  const instance = new Firefox({
+  const instance = new FirefoxLinkedIn({
     stats: statsMock,
     appPath: firefoxPath,
     url: 'https://www.linkedin.com/in/williamhgates/',
