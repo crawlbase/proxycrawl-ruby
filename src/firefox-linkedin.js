@@ -80,7 +80,7 @@ class FirefoxLinkedIn extends Firefox {
     if (this.options.url === linkedInInitialUrl) {
       this.driver.manage().addCookie({
         name: 'join_wall',
-        value: this.options.joinWall
+        value: this.options.linkedInJoinWall
       }).then(() => {
         this.options.url = this.realUrl;
         return new Promise((resolve) => setTimeout(() => resolve(), 5000));
