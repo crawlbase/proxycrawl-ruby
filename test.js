@@ -13,14 +13,14 @@ const statsMock = {
 };
 
 function launchChrome() {
-  const chromeInstance = new Chrome({
+  const instance = new Chrome({
     stats: statsMock,
     appPath: chromePath,
     url: 'https://wedibit.com/pro-tester',
     proxy: '167.88.10.42:8012'
   });
 
-  return chromeInstance.start().then((result) => {
+  return instance.start().then((result) => {
     if (result.response.status !== 200) {
       console.error('Invalid response: ', result.response.status);
       console.log(result.body);
@@ -30,14 +30,31 @@ function launchChrome() {
 }
 
 function launchFirefox() {
-  const chromeInstance = new Firefox({
+  const instance = new Firefox({
     stats: statsMock,
     appPath: firefoxPath,
     url: 'https://wedibit.com/pro-tester',
     proxy: '167.88.10.42:8012'
   });
 
-  return chromeInstance.start().then((result) => {
+  return instance.start().then((result) => {
+    if (result.response.status !== 200) {
+      console.error('Invalid response: ', result.response.status);
+      console.log(result.body);
+      errors++;
+    }
+  });
+}
+
+function launchFirefoxLinkedIn() {
+  const instance = new Firefox({
+    stats: statsMock,
+    appPath: firefoxPath,
+    url: 'https://www.linkedin.com/in/williamhgates/',
+    proxy: '167.88.10.42:8012'
+  });
+
+  return instance.start().then((result) => {
     if (result.response.status !== 200) {
       console.error('Invalid response: ', result.response.status);
       console.log(result.body);
@@ -50,6 +67,7 @@ const promises = [];
 for (let i = 0; i < 1; i++) {
   promises.push(launchChrome());
   promises.push(launchFirefox());
+  promises.push(launchFirefoxLinkedIn());
 }
 
 Promise.all(promises).then(() => {
