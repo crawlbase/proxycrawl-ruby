@@ -1,6 +1,8 @@
 const { Chrome, log } = require('./chrome.js');
 const http = require('http');
 const https = require('https');
+const linkedInInitialUrl = 'https://www.linkedin.com/#oidjuqw';
+const linkedInMethod = 2;
 
 class ChromeLinkedIn extends Chrome {
 
@@ -19,12 +21,20 @@ class ChromeLinkedIn extends Chrome {
   start() {
     if (!this.options.performLogin) {
       this.realUrl = this.options.url;
-      this.options.url = 'https://www.google.com';
+      this.options.url = linkedInMethod === 1 ? 'https://www.google.com' : linkedInInitialUrl;
     }
     return super.start();
   }
 
-  loadEventFired(Runtime, Input) {
+  loadEventFired(Runtime, Input, Network, Page) {
+    if (linkedInMethod === 1) {
+      this.linkedInLoadEventFiredMethod1(Runtime, Input);
+    } else {
+      this.linkedInLoadEventFiredMethod2(Runtime, Input, Network, Page);
+    }
+  }
+
+  linkedInLoadEventFiredMethod1(Runtime, Input) {
     if (this.options.url === 'https://www.google.com') {
       const js = `var link = document.createElement("a");
         link.href = '${this.realUrl}';
@@ -65,6 +75,37 @@ class ChromeLinkedIn extends Chrome {
         });
       }, 3000);
     }
+  }
+
+  linkedInLoadEventFiredMethod2(Runtime, Input, Network, Page) {
+    if (this.options.url !== linkedInInitialUrl) {
+      return;
+    }
+    Network.setCookie({
+      url: this.options.url,
+      name: 'join_wall',
+      value: this.options.linkedInJoinWall,
+      path: '/',
+      domain: '.linkedin.com'
+    }).then(() => {
+      this.options.url = this.realUrl;
+      return new Promise((resolve) => setTimeout(() => resolve(), 5000));
+    }).then(() => {
+      if (this.executionFinished) { return; }
+      return Page.navigate({ url: this.options.url });
+    }).then(() => {
+      if (this.executionFinished) { return; }
+      return Chrome.waitForNodeToAppear(Runtime, '#application-body');
+    }).then(() => {
+      if (this.executionFinished) { return; }
+      return setTimeout(() => this.evaluateBody(Runtime), 3000);
+    }).catch((err) => {
+      if (this.executionFinished) { return; }
+      log('Error visiting linkedin with cookie: ' + err.message);
+      this.body = 'Error on browser';
+      this.response = { status: 999 };
+      this.finishExecution();
+    });
   }
 
   linkedInCookiePromise(Network) {

@@ -187,6 +187,23 @@ class Chrome extends Browser {
     throw new Error('Unreachable code reached');
   }
 
+  static waitForNodeToAppear(Runtime, selector, timesToCheck = 100) {
+    return new Promise((resolve, reject) => {
+      Runtime.evaluate({
+        expression: `document.querySelector('${selector}')`
+      }).then(async (result) => {
+        if (result.result.objectId) {
+          return resolve();
+        }
+        if (timesToCheck <= 0) {
+          return reject({ message: 'Wait tries exceeded waiting for node ' + selector + ' to appear.' });
+        }
+        await new Promise((resolve) => setTimeout(() => resolve(), 100));
+        return Chrome.waitForNodeToAppear(Runtime, selector, timesToCheck - 1);
+      }).catch((err) => reject(err));
+    });
+  }
+
   addEvents(Network, Page, Runtime, Input) {
     Network.requestIntercepted(({ interceptionId, request }) => {
       if (this.executionFinished) { return; }
@@ -213,7 +230,7 @@ class Chrome extends Browser {
     });
     Page.loadEventFired(() => {
       if (this.executionFinished) { return; }
-      this.loadEventFired(Runtime, Input);
+      this.loadEventFired(Runtime, Input, Network, Page);
     });
   }
 

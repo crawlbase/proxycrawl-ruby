@@ -13,6 +13,7 @@ const statsMock = {
 };
 
 function launchChrome() {
+  console.log('Launching Chrome');
   const instance = new Chrome({
     stats: statsMock,
     appPath: chromePath,
@@ -30,6 +31,7 @@ function launchChrome() {
 }
 
 function launchFirefox() {
+  console.log('Launching Firefox');
   const instance = new Firefox({
     stats: statsMock,
     appPath: firefoxPath,
@@ -47,6 +49,7 @@ function launchFirefox() {
 }
 
 function launchFirefoxLinkedIn() {
+  console.log('Launching Firefox LinkedIn');
   const instance = new FirefoxLinkedIn({
     stats: statsMock,
     appPath: firefoxPath,
