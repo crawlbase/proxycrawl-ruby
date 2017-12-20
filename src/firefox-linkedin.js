@@ -46,59 +46,64 @@ class FirefoxLinkedIn extends Firefox {
   }
 
   linkedInLoadEventFiredMethod1() {
-    if (this.options.url === 'https://www.google.com') {
-      const js = `var link = document.createElement("a");
-        link.href = '${this.realUrl}';
-        link.innerText = 'open';
-        link.id = 'click-go';
-        document.getElementById('viewport').prepend(link);
-        var event = new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          view: window
-        });
-        link.dispatchEvent(event);`;
-      this.driver.executeScript(js).then(() => {
-        this.options.url = this.realUrl;
-        return new Promise((resolve) => resolve());
-      }).then(async () => {
-        return await this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
-      }).then(() => {
-        return setTimeout(() => this.evaluateBody(), 5000);
-      }).catch((err) => {
-        if (this.executionFinished) { return; }
-        log('Error visiting linkedin from Google: ' + err.message);
-        this.body = 'Error on browser';
-        this.stats.browserBodyResponseReady(this.appName);
-        this.response = { status: 999 };
-        this.finishExecution();
-      });
+    if (this.options.url !== 'https://www.google.com') {
+      return;
     }
+    const js = `var link = document.createElement("a");
+      link.href = '${this.realUrl}';
+      link.innerText = 'open';
+      link.id = 'click-go';
+      document.getElementById('viewport').prepend(link);
+      var event = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      });
+      link.dispatchEvent(event);`;
+    this.driver.executeScript(js).then(() => {
+      this.options.url = this.realUrl;
+      return new Promise((resolve) => resolve());
+    }).then(async () => {
+      return await this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
+    }).then(() => {
+      return setTimeout(() => this.evaluateBody(), 5000);
+    }).catch((err) => {
+      if (this.executionFinished) { return; }
+      log('Error visiting linkedin from Google: ' + err.message);
+      this.body = 'Error on browser';
+      this.stats.browserBodyResponseReady(this.appName);
+      this.response = { status: 999 };
+      this.finishExecution();
+    });
   }
 
   linkedInLoadEventFiredMethod2() {
-    if (this.options.url === linkedInInitialUrl) {
-      this.driver.manage().addCookie({
-        name: 'join_wall',
-        value: this.options.linkedInJoinWall
-      }).then(() => {
-        this.options.url = this.realUrl;
-        return new Promise((resolve) => setTimeout(() => resolve(), 5000));
-      }).then(() => {
-        return this.driver.get(this.options.url);
-      }).then(() => {
-        return this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
-      }).then(() => {
-        return setTimeout(() => this.evaluateBody(), 5000);
-      }).catch((err) => {
-        if (this.executionFinished) { return; }
-        log('Error when loading linkedin page: ' + err.message);
-        this.body = 'Error on browser';
-        this.stats.browserBodyResponseReady(this.appName);
-        this.response = { status: 999 };
-        this.finishExecution();
-      });
+    if (this.options.url !== linkedInInitialUrl) {
+      return;
     }
+    this.driver.manage().addCookie({
+      name: 'join_wall',
+      value: this.options.linkedInJoinWall
+    }).then(() => {
+      this.options.url = this.realUrl;
+      return new Promise((resolve) => setTimeout(() => resolve(), 5000));
+    }).then(() => {
+      if (this.executionFinished) { return; }
+      return this.driver.get(this.options.url);
+    }).then(() => {
+      if (this.executionFinished) { return; }
+      return this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
+    }).then(() => {
+      if (this.executionFinished) { return; }
+      return setTimeout(() => this.evaluateBody(), 5000);
+    }).catch((err) => {
+      if (this.executionFinished) { return; }
+      log('Error when loading linkedin page: ' + err.message);
+      this.body = 'Error on browser';
+      this.stats.browserBodyResponseReady(this.appName);
+      this.response = { status: 999 };
+      this.finishExecution();
+    });
   }
 
 }
