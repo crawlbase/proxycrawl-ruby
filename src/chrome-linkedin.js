@@ -104,6 +104,7 @@ class ChromeLinkedIn extends Chrome {
       log('Error visiting linkedin with cookie: ' + err.message);
       this.body = 'Error on browser';
       this.response = { status: 999 };
+      this.stats.browserBodyResponseReady(this.appName);
       this.finishExecution();
     });
   }
