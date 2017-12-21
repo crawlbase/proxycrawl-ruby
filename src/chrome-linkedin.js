@@ -98,7 +98,7 @@ class ChromeLinkedIn extends Chrome {
       return Chrome.waitForNodeToAppear(Runtime, '#application-body');
     }).then(() => {
       if (this.executionFinished) { return; }
-      return setTimeout(() => this.evaluateBody(Runtime), 3000);
+      return setTimeout(() => this.evaluateBody(Runtime), 5000);
     }).catch((err) => {
       if (this.executionFinished) { return; }
       log('Error visiting linkedin with cookie: ' + err.message);
