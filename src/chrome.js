@@ -13,7 +13,26 @@ const blockedUrls = [
   'https://www.gstatic.com/inputtools/images/*',
   'https://www.google.*/gen_204*',
   'https://www.gstatic.com/og/*',
-  'https://apis.google.com/*'
+  'https://apis.google.com/*',
+  'https://rusads.toysrus.com/*',
+  'https://*.rubiconproject.com/*',
+  'https://asset.gomoxie.solutions/*',
+  'https://*.userreplay.net/*',
+  'https://cdn.userreplay.net/*',
+  'https://*.omniretailgroup.net/*',
+  'https://static.criteo.net/*',
+  'https://js-agent.newrelic.com/*',
+  'https://tags.tiqcdn.com/*',
+  'https://smetrics.toysrus.com/*',
+  'https://www.toysrus.com/build/assets/fonts/*',
+  'https://www.toysrus.com/build/vendor.*.svg',
+  'https://px.owneriq.net/*',
+  'https://*.brsrvr.com/*',
+  'https://www.res-x.com/*',
+  'https://truimg.toysrus.com/*',
+  'https://tags.tiqcdn.com/*',
+  'https://*.go-mpulse.net/*',
+  'https://sync.adaptv.advertising.com/*'
 ];
 const chromeCommonFlags = [
   '--no-sandbox',
