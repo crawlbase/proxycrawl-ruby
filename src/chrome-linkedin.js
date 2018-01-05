@@ -21,7 +21,11 @@ class ChromeLinkedIn extends Chrome {
   start() {
     if (!this.options.performLogin) {
       this.realUrl = this.options.url;
-      // this.options.url = linkedInMethod === 1 ? 'https://www.google.com' : linkedInInitialUrl;
+      if (linkedInMethod === 1) {
+        this.options.url = 'https://www.google.com';
+      } else if (linkedInMethod === 2) {
+        this.options.url = linkedInInitialUrl;
+      }
     }
     return super.start();
   }
@@ -32,17 +36,7 @@ class ChromeLinkedIn extends Chrome {
     } else if (linkedInMethod === 2) {
       this.linkedInLoadEventFiredMethod2(Runtime, Input, Network, Page);
     } else {
-      Chrome.waitForNodeToAppear(Runtime, '#application-body').then(() => {
-        if (this.executionFinished) { return; }
-        return setTimeout(() => this.evaluateBody(Runtime), 5000);
-      }).catch((err) => {
-        if (this.executionFinished) { return; }
-        log('Error visiting linkedin with cookie: ' + err.message);
-        this.body = 'Error on browser';
-        this.response = { status: 999 };
-        this.stats.browserBodyResponseReady(this.appName);
-        this.finishExecution();
-      });
+      this.linkedInLoadEventFiredMethod3(Runtime);
     }
   }
 
@@ -109,6 +103,20 @@ class ChromeLinkedIn extends Chrome {
       if (this.executionFinished) { return; }
       return Chrome.waitForNodeToAppear(Runtime, '#application-body');
     }).then(() => {
+      if (this.executionFinished) { return; }
+      return setTimeout(() => this.evaluateBody(Runtime), 5000);
+    }).catch((err) => {
+      if (this.executionFinished) { return; }
+      log('Error visiting linkedin with cookie: ' + err.message);
+      this.body = 'Error on browser';
+      this.response = { status: 999 };
+      this.stats.browserBodyResponseReady(this.appName);
+      this.finishExecution();
+    });
+  }
+
+  linkedInLoadEventFiredMethod3(Runtime) {
+    Chrome.waitForNodeToAppear(Runtime, '#application-body').then(() => {
       if (this.executionFinished) { return; }
       return setTimeout(() => this.evaluateBody(Runtime), 5000);
     }).catch((err) => {
