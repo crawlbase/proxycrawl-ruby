@@ -116,12 +116,12 @@ class ChromeLinkedIn extends Chrome {
   }
 
   linkedInLoadEventFiredMethod3(Runtime) {
-    Chrome.waitForNodeToAppear(Runtime, '#application-body').then(() => {
+    Chrome.waitForNodeToAppear(Runtime, '#application-body', 200).then(() => {
       if (this.executionFinished) { return; }
       return setTimeout(() => this.evaluateBody(Runtime), 5000);
     }).catch((err) => {
       if (this.executionFinished) { return; }
-      log('Error visiting linkedin with cookie: ' + err.message);
+      log('Error visiting linkedin with method 3: ' + err.message);
       this.body = 'Error on browser';
       this.response = { status: 999 };
       this.stats.browserBodyResponseReady(this.appName);
