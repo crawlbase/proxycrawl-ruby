@@ -21,7 +21,7 @@ class ChromeLinkedIn extends Chrome {
   start() {
     if (!this.options.performLogin) {
       this.realUrl = this.options.url;
-      this.options.url = linkedInMethod === 1 ? 'https://www.google.com' : linkedInInitialUrl;
+      // this.options.url = linkedInMethod === 1 ? 'https://www.google.com' : linkedInInitialUrl;
     }
     return super.start();
   }
