@@ -2,7 +2,7 @@ const { Chrome, log } = require('./chrome.js');
 const http = require('http');
 const https = require('https');
 const linkedInInitialUrl = 'https://www.linkedin.com/#oidjuqw';
-const linkedInMethod = 2;
+const linkedInMethod = 3;
 
 class ChromeLinkedIn extends Chrome {
 
@@ -29,8 +29,20 @@ class ChromeLinkedIn extends Chrome {
   loadEventFired(Runtime, Input, Network, Page) {
     if (linkedInMethod === 1) {
       this.linkedInLoadEventFiredMethod1(Runtime, Input);
-    } else {
+    } else if (linkedInMethod === 2) {
       this.linkedInLoadEventFiredMethod2(Runtime, Input, Network, Page);
+    } else {
+      Chrome.waitForNodeToAppear(Runtime, '#application-body').then(() => {
+        if (this.executionFinished) { return; }
+        return setTimeout(() => this.evaluateBody(Runtime), 5000);
+      }).catch((err) => {
+        if (this.executionFinished) { return; }
+        log('Error visiting linkedin with cookie: ' + err.message);
+        this.body = 'Error on browser';
+        this.response = { status: 999 };
+        this.stats.browserBodyResponseReady(this.appName);
+        this.finishExecution();
+      });
     }
   }
 
