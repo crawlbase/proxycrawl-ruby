@@ -56,7 +56,7 @@ const chromeCommonFlags = [
   '--prerender-from-omnibox=disabled',
   '--ipc-connection-timeout=10000',
   '--media-cache-size=10000000',
-  '--window-size=1918,1071'
+  '--window-size=1218,1001'
 ];
 var onloadScript = '';
 
