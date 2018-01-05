@@ -8,17 +8,30 @@ const proxyFailTimeout = 10000;
 const detectProxyConnectFail = false;
 const proxyOpenTimeout = 5000;
 const blockedUrls = [
+  // Google
   'https://ssl.gstatic.com/*/images/*',
   'https://www.google.*/images/*',
   'https://www.gstatic.com/inputtools/images/*',
   'https://www.google.*/gen_204*',
   'https://www.gstatic.com/og/*',
   'https://apis.google.com/*',
+  // Linkedin
+  'https://static-exp*.licdn.com/scds/concat/common/css*',
+  'https://static-exp*.licdn.com/scds/common/u/images/*',
+  'https://static-exp*.licdn.com/sc/p/com.linkedin.public-profile-frontend',
+  'https://www.linkedin.com/li/track',
+  'https://static-exp*.licdn.com/cdo/rum/id?*',
+  'https://www.linkedin.com/lite/platformtelemetry',
+  'https://www.linkedin.com/mob/tracking',
+  'https://media-exp*.licdn.com/cdo/rum/id?*',
+  'https://www.linkedin.com/fizzy/admin?*',
+  'https://www.linkedin.com/lite/platformtelemetry',
+  'https://www.linkedin.com/lite/rum-track?csrfToken=*',
+  // Toysrus
   'https://rusads.toysrus.com/*',
   'https://*.rubiconproject.com/*',
   'https://asset.gomoxie.solutions/*',
   'https://*.userreplay.net/*',
-  'https://cdn.userreplay.net/*',
   'https://*.omniretailgroup.net/*',
   'https://static.criteo.net/*',
   'https://js-agent.newrelic.com/*',
