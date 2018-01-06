@@ -53,9 +53,9 @@ class ChromeLinkedIn extends Chrome {
   }
 
   loadEventFired(Runtime, Input, Network, Page) {
-    if (linkedInMethod === 1) {
+    if (this.options.linkedInMethod === '1') {
       this.linkedInLoadEventFiredMethod1(Runtime, Input);
-    } else if (linkedInMethod === 2) {
+    } else if (this.options.linkedInMethod === '2') {
       this.linkedInLoadEventFiredMethod2(Runtime, Input, Network, Page);
     } else {
       this.linkedInLoadEventFiredMethod3(Runtime);
