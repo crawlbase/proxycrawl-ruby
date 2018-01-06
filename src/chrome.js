@@ -69,6 +69,21 @@ const chromeCommonFlags = [
   '--prerender-from-omnibox=disabled',
   '--ipc-connection-timeout=10000',
   '--media-cache-size=10000000',
+  '--disable-background-networking',
+  '--disable-browser-side-navigation',
+  '--disable-client-side-phishing-detection',
+  '--disable-default-apps',
+  '--disable-gpu',
+  '--disable-hang-monitor',
+  '--disable-popup-blocking',
+  '--disable-prompt-on-repost',
+  '--disable-sync',
+  '--disable-web-resources',
+  '--ignore-certificate-errors',
+  '--no-first-run',
+  '--safebrowsing-disable-auto-update',
+  '--use-mock-keychain',
+  '--blink-settings=imagesEnabled=false',
   '--window-size=1218,1001'
 ];
 var onloadScript = '';
@@ -114,14 +129,15 @@ class Chrome extends Browser {
     if (this.isLambda) {
       Array.prototype.push.apply(chromeFlags, this.chromeFlags);
     } else {
-      Array.prototype.push.apply(chromeFlags, chromeCommonFlags);
+      if (this.isLinkedIn) {
+        Array.prototype.push.apply(chromeFlags, this.chromeCommonFlags);
+      } else {
+        Array.prototype.push.apply(chromeFlags, chromeCommonFlags);
+      }
       if (this.options.xvfb === 'true') {
         chromeFlags.push('--display=:99');
       } else {
         chromeFlags.push('--headless');
-      }
-      if (!this.isLinkedIn || !this.options.performLogin) {
-        chromeFlags.push('--disable-background-networking', '--disable-browser-side-navigation', '--disable-client-side-phishing-detection', '--disable-default-apps', '--disable-gpu', '--disable-hang-monitor', '--disable-popup-blocking', '--disable-prompt-on-repost', '--disable-sync', '--disable-web-resources', '--ignore-certificate-errors', '--no-first-run', '--safebrowsing-disable-auto-update', '--use-mock-keychain', '--blink-settings=imagesEnabled=false');
       }
     }
 
