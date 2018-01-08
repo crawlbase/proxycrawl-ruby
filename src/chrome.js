@@ -268,7 +268,7 @@ class Chrome extends Browser {
       }
     });
     Network.responseReceived(({ type, response }) => {
-      if (type === 'Document' && this.response === null && !this.executionFinished) {
+      if (type === 'Document' && (this.response === null || this.response.status === 302) && !this.executionFinished) {
         this.stats.browserResponseReady(this.appName);
         this.response = response;
         this.responseReceivedResolve();
