@@ -2,7 +2,6 @@ const { Chrome, log } = require('./chrome.js');
 const http = require('http');
 const https = require('https');
 const linkedInInitialUrl = 'https://www.linkedin.com/#oidjuqw';
-const linkedInMethod = 3;
 
 class ChromeLinkedIn extends Chrome {
 
@@ -43,9 +42,9 @@ class ChromeLinkedIn extends Chrome {
   start() {
     if (!this.options.performLogin) {
       this.realUrl = this.options.url;
-      if (linkedInMethod === 1) {
+      if (this.options.linkedInMethod === 1) {
         this.options.url = 'https://www.google.com';
-      } else if (linkedInMethod === 2) {
+      } else if (this.options.linkedInMethod === 2) {
         this.options.url = linkedInInitialUrl;
       }
     }
