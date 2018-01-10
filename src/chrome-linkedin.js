@@ -1,7 +1,7 @@
 const { Chrome, log } = require('./chrome.js');
 const http = require('http');
 const https = require('https');
-const linkedInInitialUrl = 'https://www.linkedin.com/#oidjuqw';
+const linkedInInitialUrl = 'https://www.linkedin.com';
 
 class ChromeLinkedIn extends Chrome {
 
