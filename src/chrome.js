@@ -225,7 +225,7 @@ class Chrome extends Browser {
         return { tab, client };
       } catch (error) {
         if ((error.code == 'ECONNREFUSED' || error.code == 'ECONNRESET') && i < tries - 1) {
-          await new Promise((resolve) => setTimeout(() => resolve(), 10));
+          await new Promise((resolve) => setTimeout(() => resolve(), 100));
           continue;
         } else {
           throw error;
