@@ -84,7 +84,8 @@ const chromeCommonFlags = [
   '--safebrowsing-disable-auto-update',
   '--use-mock-keychain',
   '--blink-settings=imagesEnabled=false',
-  '--window-size=1218,1001'
+  '--window-size=1218,1001',
+  '--profile-directory=Default'
 ];
 var onloadScript = '';
 
@@ -125,7 +126,7 @@ class Chrome extends Browser {
     this.stats.browserNewRequest(this.appName);
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
 
-    const chromeFlags = ['--proxy-server=http://' + this.options.proxy, '--remote-debugging-port=' + this.debuggerPort, '--profile-directory=Default', '--user-data-dir=' + this.sessionDir];
+    const chromeFlags = ['--proxy-server=http://' + this.options.proxy, '--remote-debugging-port=' + this.debuggerPort, '--user-data-dir=' + this.sessionDir];
     if (this.isLambda) {
       Array.prototype.push.apply(chromeFlags, this.chromeFlags);
     } else {

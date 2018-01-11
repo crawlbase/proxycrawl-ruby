@@ -7,7 +7,7 @@ class ChromeLinkedIn extends Chrome {
 
   get chromeCommonFlags() {
     return [
-      '--no-sandbox',
+      // '--no-sandbox',
       // '--disable-background-networking',
       // '--disable-browser-side-navigation',
       // '--disable-client-side-phishing-detection',
