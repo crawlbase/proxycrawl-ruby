@@ -129,11 +129,12 @@ class ChromeLinkedIn extends Chrome {
       return;
     }
     Network.setCookie({
-      url: this.options.url,
+      // url: this.options.url,
       name: 'join_wall',
       value: this.options.linkedInJoinWall,
       path: '/',
-      domain: '.linkedin.com'
+      domain: 'www.linkedin.com',
+      secure: true
     }).then(() => {
       this.options.url = this.realUrl;
       return new Promise((resolve) => setTimeout(() => resolve(), 5000));
