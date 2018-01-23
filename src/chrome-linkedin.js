@@ -7,23 +7,6 @@ class ChromeLinkedIn extends Chrome {
 
   get chromeCommonFlags() {
     return [
-      // '--no-sandbox',
-      // '--disable-background-networking',
-      // '--disable-browser-side-navigation',
-      // '--disable-client-side-phishing-detection',
-      // '--disable-default-apps',
-      // '--disable-hang-monitor',
-      // '--disable-popup-blocking',
-      // '--disable-prompt-on-repost',
-      // '--disable-sync',
-      // '--disable-web-resources',
-      // '--force-fieldtrials=SiteIsolationExtensions/Control',
-      // '--ignore-certificate-errors',
-      // '--metrics-recording-only',
-      // '--no-first-run',
-      // '--password-store=basic',
-      // '--safebrowsing-disable-auto-update',
-      // '--use-mock-keychain',
       '--disable-background-networking',
       '--disable-browser-side-navigation',
       '--disable-client-side-phishing-detection',
