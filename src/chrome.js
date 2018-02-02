@@ -387,7 +387,9 @@ class Chrome extends Browser {
         this.browser.Network.disable().catch(() => { /* do nothing */ });
         this.browser.Page.disable().catch(() => { /* do nothing */ });
         if (!this.isLambda) {
-          this.browser.Network.setRequestInterceptionEnabled({ enabled: false }).catch(() => { /* do nothing */ });
+          try {
+            this.browser.Network.setRequestInterceptionEnabled({ enabled: false }).catch(() => { /* do nothing */ });
+          } catch (e) { /* do nothing */ }
         }
         this.browser.close();
       } catch (e) {
