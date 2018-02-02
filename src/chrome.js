@@ -349,7 +349,13 @@ class Chrome extends Browser {
   }
 
   interceptionEnabledPromise(Network) {
-    return Network.setRequestInterceptionEnabled({ enabled: true });
+    let promise;
+
+    try {
+      promise = Network.setRequestInterceptionEnabled({ enabled: true });
+    } catch (e) { /* do nothing */ }
+
+    return promise;
   }
 
   userAgentOverridePromise(Network) {
