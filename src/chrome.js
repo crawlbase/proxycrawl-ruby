@@ -15,6 +15,7 @@ const blockedUrls = [
   'https://www.google.*/gen_204*',
   'https://www.gstatic.com/og/*',
   'https://apis.google.com/*',
+  'https://adservice.google*',
   // Linkedin
   'https://static-exp*.licdn.com/scds/concat/common/css*',
   'https://static-exp*.licdn.com/scds/common/u/images/*',
@@ -353,7 +354,9 @@ class Chrome extends Browser {
 
     try {
       promise = Network.setRequestInterceptionEnabled({ enabled: true });
-    } catch (e) { /* do nothing */ }
+    } catch (e) {
+      //promise = Network.setRequestInterception(['https://adservice.google*']);
+    }
 
     return promise;
   }
@@ -389,7 +392,9 @@ class Chrome extends Browser {
         if (!this.isLambda) {
           try {
             this.browser.Network.setRequestInterceptionEnabled({ enabled: false }).catch(() => { /* do nothing */ });
-          } catch (e) { /* do nothing */ }
+          } catch (e) {
+            //this.browser.Network.setRequestInterception([]).catch(() => { /* do nothing */ });
+          }
         }
         this.browser.close();
       } catch (e) {
