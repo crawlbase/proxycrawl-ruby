@@ -49,6 +49,7 @@ const blockedUrls = [
   'https://sync.adaptv.advertising.com/*'
 ];
 const chromeCommonFlags = [
+  // '--auto-open-devtools-for-tabs',
   '--no-sandbox',
   // '--no-zygote',
   '--disable-breakpad',
@@ -85,7 +86,7 @@ const chromeCommonFlags = [
   '--safebrowsing-disable-auto-update',
   '--use-mock-keychain',
   '--blink-settings=imagesEnabled=false',
-  '--window-size=1218,1001',
+  '--window-size=1318,1001',
   '--profile-directory=Default'
 ];
 var onloadScript = '';
@@ -287,8 +288,28 @@ class Chrome extends Browser {
     });
   }
 
-  loadEventFired(Runtime) {
+  async loadEventFired(Runtime) {
+    if (this.options.evaluateJavascript) {
+      try {
+        const scriptResult = await this.evaluateJavascript(Runtime);
+        if (scriptResult.exceptionDetails) {
+          log('Javascript evaluation promise rejected: ' + scriptResult.exceptionDetails.exception.value);
+        }
+      } catch (e) { log('Error while evaluating passed javascript command'); }
+    }
     this.evaluateBody(Runtime);
+  }
+
+  evaluateJavascript(Runtime) {
+    if (this.executionFinished) { return; }
+    this.browser._ws._socket.setTimeout(0);
+    const browserCode = `new Promise(async (_resolve, _reject) => {
+      ${this.options.evaluateJavascript}
+    });`;
+    return Runtime.evaluate({
+      expression: browserCode,
+      awaitPromise: true
+    });
   }
 
   async evaluateBody(Runtime) {

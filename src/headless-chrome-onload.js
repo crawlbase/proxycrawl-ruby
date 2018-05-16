@@ -18,3 +18,7 @@ window.innerWidth = 1920;
 window.innerHeight = 1130;
 window.outerWidth = 1920;
 window.outerHeight = 1210;
+
+window._delay = async function(delayTime) {
+  return new Promise((resolve) => setTimeout(() => resolve(), delayTime));
+};
