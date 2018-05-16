@@ -127,7 +127,7 @@ class Chrome extends Browser {
     this.stats.browserNewRequest(this.appName);
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
 
-    const chromeFlags = ['--proxy-server=http://' + this.options.proxy, '--remote-debugging-port=' + this.debuggerPort, '--user-data-dir=' + this.sessionDir];
+    const chromeFlags = ['--remote-debugging-port=' + this.debuggerPort, '--user-data-dir=' + this.sessionDir];
     if (this.isLambda) {
       Array.prototype.push.apply(chromeFlags, this.chromeFlags);
     } else {
@@ -141,6 +141,9 @@ class Chrome extends Browser {
       } else {
         chromeFlags.push('--headless');
       }
+    }
+    if (this.options.proxy) {
+      chromeFlags.push('--proxy-server=http://' + this.options.proxy);
     }
 
     try {
