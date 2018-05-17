@@ -292,8 +292,9 @@ class Chrome extends Browser {
     if (this.options.evaluateJavascript) {
       try {
         const scriptResult = await this.evaluateJavascript(Runtime);
-        if (scriptResult.exceptionDetails) {
+        if (!this.executionFinished && scriptResult.exceptionDetails) {
           log('Javascript evaluation promise rejected: ' + scriptResult.exceptionDetails.exception.value);
+          this.response = { status: 595 };
         }
       } catch (e) { log('Error while evaluating passed javascript command'); }
     }
