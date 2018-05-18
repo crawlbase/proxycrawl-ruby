@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chrome-remote-interface": "^0.25.5",
+    "chrome-remote-interface": "^0.25.6",
     "geckodriver": "^1.11.0",
     "rimraf": "^2.6.2",
     "selenium-webdriver": "^3.6.0"
