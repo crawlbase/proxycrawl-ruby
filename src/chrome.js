@@ -197,7 +197,8 @@ class Chrome extends Browser {
       this.userAgentOverridePromise(Network),
       Network.setBlockedURLs({ urls: blockedUrls }),
       this.interceptionEnabledPromise(Network),
-      this.linkedInCookiePromise(Network)
+      this.linkedInCookiePromise(Network),
+      this.cookiePromise(Network)
     ]).then(() => {
       if (this.executionFinished) { return; }
       if ((this.isLinkedIn || this.isTicketmaster) && this.options.loadAdditionalData) {
@@ -373,6 +374,27 @@ class Chrome extends Browser {
 
   linkedInCookiePromise() {
     return new Promise((resolve) => resolve());
+  }
+
+  cookiePromise(Network) {
+    if (!this.options.cookie || this.options.cookie === null || this.options.cookie === '') {
+      return new Promise((resolve) => resolve());
+    }
+    const cookies = this.options.cookie.split(';');
+    const cookiesArray = [];
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.length === 0) {
+        continue;
+      }
+      const cookieData = cookie.split('=');
+      cookiesArray.push({
+        url: this.options.url,
+        name: cookieData[0],
+        value: cookieData[1]
+      });
+    }
+    return Network.setCookies({ cookies: cookiesArray });
   }
 
   interceptionEnabledPromise(Network) {
