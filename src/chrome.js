@@ -388,10 +388,12 @@ class Chrome extends Browser {
         continue;
       }
       const cookieData = cookie.split('=');
+      const cookieName = cookieData[0];
+      cookieData.splice(0, 1);
       cookiesArray.push({
         url: this.options.url,
-        name: cookieData[0],
-        value: cookieData[1]
+        name: cookieName,
+        value: cookieData.join('=')
       });
     }
     return Network.setCookies({ cookies: cookiesArray });
