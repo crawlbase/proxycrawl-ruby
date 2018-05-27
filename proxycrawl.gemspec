@@ -5,7 +5,7 @@ require "proxycrawl/version"
 
 Gem::Specification.new do |spec|
   spec.name        = "proxycrawl"
-  spec.version     = Proxycrawl::VERSION
+  spec.version     = ProxyCrawl::VERSION
   spec.platform    = Gem::Platform::RUBY
   spec.authors     = ["proxycrawl"]
   spec.email       = ["info@proxycrawl.com"]
