@@ -1,4 +1,4 @@
-/* global navigator, window */
+/* global navigator, window, document */
 // overwrite the `languages` property to use a custom getter
 Object.defineProperty(navigator, 'languages', {
   get: function() {
@@ -21,4 +21,7 @@ window.outerHeight = 1210;
 
 window._delay = async function(delayTime) {
   return new Promise((resolve) => setTimeout(() => resolve(), delayTime));
+};
+window._scrollBottom = function() {
+  window.scrollTo(0, document.body.scrollHeight);
 };
