@@ -109,7 +109,7 @@ class Chrome extends Browser {
 
   get log() { return log; }
   get appName() { return 'Chrome'; }
-  get killTimeout() { return killTimeout; }
+  get killTimeout() { return (this.options && this.options.killTimeout) || killTimeout; }
 
   cleanProperties() {
     super.cleanProperties();
