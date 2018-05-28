@@ -73,6 +73,8 @@ const chromeCommonFlags = [
   '--media-cache-size=10000000',
   '--disable-background-networking',
   '--disable-browser-side-navigation',
+  '--disable-desktop-notifications',
+  '--disable-notifications',
   '--disable-client-side-phishing-detection',
   '--disable-default-apps',
   '--disable-gpu',
