@@ -87,7 +87,6 @@ const chromeCommonFlags = [
   '--no-first-run',
   '--safebrowsing-disable-auto-update',
   '--use-mock-keychain',
-  '--blink-settings=imagesEnabled=false',
   '--window-size=1318,1001',
   '--profile-directory=Default'
 ];
@@ -143,6 +142,9 @@ class Chrome extends Browser {
         chromeFlags.push('--display=:99');
       } else {
         chromeFlags.push('--headless');
+      }
+      if (this.options.enableImages !== 'true') {
+        chromeFlags.push('--blink-settings=imagesEnabled=false');
       }
     }
     if (this.options.proxy) {
