@@ -68,6 +68,8 @@ const chromeCommonFlags = [
   '--no-default-browser-check',
   '--no-experiments',
   '--no-pings',
+  '--disable-datasaver-prompt',
+  '--disable-add-to-shelf',
   '--prerender-from-omnibox=disabled',
   '--ipc-connection-timeout=10000',
   '--media-cache-size=10000000',
