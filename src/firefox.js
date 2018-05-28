@@ -13,7 +13,7 @@ class Firefox extends Browser {
 
   get log() { return log; }
   get appName() { return 'Firefox'; }
-  get killTimeout() { return killTimeout; }
+  get killTimeout() { return (this.options && this.options.killTimeout) || killTimeout; }
 
   constructor(options) {
     super(options);
