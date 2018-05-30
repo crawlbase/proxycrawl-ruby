@@ -1,4 +1,4 @@
-/* global navigator, window, document */
+/* global navigator, window, document, MouseEvent */
 // overwrite the `languages` property to use a custom getter
 Object.defineProperty(navigator, 'languages', {
   get: function() {
@@ -24,4 +24,11 @@ window._delay = async function(delayTime) {
 };
 window._scrollBottom = function() {
   window.scrollTo(0, document.body.scrollHeight);
+};
+window._simulateClick = function(element) {
+  element.dispatchEvent(new MouseEvent('click', {
+    view: window,
+    bubbles: true,
+    cancelable: true
+  }));
 };
