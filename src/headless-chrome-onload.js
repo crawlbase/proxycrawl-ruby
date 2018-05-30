@@ -25,7 +25,7 @@ window._delay = async function(delayTime) {
 window._scrollBottom = function() {
   window.scrollTo(0, document.body.scrollHeight);
 };
-window._simulateClick = function(element) {
+window._clickElement = function(element) {
   element.dispatchEvent(new MouseEvent('click', {
     view: window,
     bubbles: true,
