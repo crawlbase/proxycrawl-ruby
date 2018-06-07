@@ -64,10 +64,8 @@ options = {
 
 response = api.get('https://www.reddit.com/r/pics/comments/5bx4bx/thanks_obama/', options)
 
-puts response.body
 puts response.status_code
-puts response.original_status
-puts response.pc_status
+puts response.body # read the API json response
 ```
 
 ### POST requests
@@ -89,7 +87,7 @@ You can send the data as application/json instead of x-www-form-urlencoded by se
 ```ruby
 response = api.post('https://httpbin.org/post', { some_json: 'with some value' }, { post_content_type: 'json' })
 
-puts response.code
+puts response.status_code
 puts response.body
 
 ```
