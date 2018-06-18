@@ -287,7 +287,7 @@ class Chrome extends Browser {
       const contentDispositionHeader = response && response.headers && response.headers['content-disposition'];
       if (!this.executionFinished &&
         (type === 'Document' && (this.response === null || this.response.status === 302)) ||
-        ('true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1)
+        (null !== this.options && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1)
       ) {
         this.stats.browserResponseReady(this.appName);
         this.response = response;
