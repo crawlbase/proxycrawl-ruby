@@ -7,6 +7,7 @@ const detectProxyFail = true;
 const proxyFailTimeout = 10000;
 const detectProxyConnectFail = false;
 const proxyOpenTimeout = 5000;
+const downloadPath = 'darwin' === process.platform ? '/Users/adria/Downloads' : '/tmp';
 const blockedUrls = [
   // Google
   'https://ssl.gstatic.com/*/images/*',
@@ -117,6 +118,7 @@ class Chrome extends Browser {
     this.additionalBodyData = null;
     this.openSocketTimeout = null;
     this.pendingAjaxCalls = 0;
+    this.fileAttachment = null;
   }
 
   async start() {
@@ -204,7 +206,8 @@ class Chrome extends Browser {
       Network.setBlockedURLs({ urls: blockedUrls }),
       this.interceptionEnabledPromise(Network),
       this.linkedInCookiePromise(Network),
-      this.cookiePromise(Network)
+      this.cookiePromise(Network),
+      this.downloadBehaviorPromise(Page)
     ]).then(() => {
       if (this.executionFinished) { return; }
       if ((this.isLinkedIn || this.isTicketmaster) && this.options.loadAdditionalData) {
@@ -281,9 +284,19 @@ class Chrome extends Browser {
       }
     });
     Network.responseReceived(({ type, response }) => {
-      if (type === 'Document' && (this.response === null || this.response.status === 302) && !this.executionFinished) {
+      const contentDispositionHeader = response && response.headers && response.headers['content-disposition'];
+      if (!this.executionFinished &&
+        (type === 'Document' && (this.response === null || this.response.status === 302)) ||
+        ('true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1)
+      ) {
         this.stats.browserResponseReady(this.appName);
         this.response = response;
+        if ('true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1) {
+          const fileAttachment = contentDispositionHeader.split(';');
+          if (fileAttachment.length > 0) {
+            this.fileAttachment = fileAttachment[1].trim().replace('filename="', '').replace('"', '');
+          }
+        }
         this.responseReceivedResolve();
       } else if (type === 'XHR' && !this.executionFinished && this.options.ajaxWait === 'true') {
         this.pendingAjaxCalls--;
@@ -332,6 +345,12 @@ class Chrome extends Browser {
         await new Promise((resolve) => setTimeout(() => resolve(), 500));
       }
       if (this.executionFinished) { return; }
+    }
+    if (null !== this.fileAttachment && fs.existsSync(downloadPath + '/' + this.fileAttachment)) {
+      this.body = fs.readFileSync(downloadPath + '/' + this.fileAttachment, { encoding: 'utf8' });
+      this.stats.browserBodyReady(this.appName);
+      fs.unlinkSync(downloadPath + '/' + this.fileAttachment);
+      return this.bodyReceivedResolve();
     }
     Runtime.evaluate({ expression: 'document.documentElement.outerHTML' }).then((result) => {
       if ((this.body !== null && this.body !== '') || this.executionFinished) {
@@ -422,6 +441,14 @@ class Chrome extends Browser {
       return Network.setUserAgentOverride({ userAgent: this.options.userAgent });
     } else {
       return new Promise((resolve) => resolve());
+    }
+  }
+
+  downloadBehaviorPromise(Page) {
+    if ('true' === this.options.enableDownloads) {
+      return Page.setDownloadBehavior({ behavior: 'allow', downloadPath });
+    } else {
+      return Page.setDownloadBehavior({ behavior: 'deny' });
     }
   }
 
