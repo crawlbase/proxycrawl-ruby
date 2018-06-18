@@ -347,7 +347,7 @@ class Chrome extends Browser {
       if (this.executionFinished) { return; }
     }
     if (null !== this.fileAttachment && fs.existsSync(downloadPath + '/' + this.fileAttachment)) {
-      this.body = fs.readFileSync(downloadPath + '/' + this.fileAttachment, { encoding: 'utf8' });
+      this.body = fs.readFileSync(downloadPath + '/' + this.fileAttachment);
       this.stats.browserBodyReady(this.appName);
       fs.unlinkSync(downloadPath + '/' + this.fileAttachment);
       return this.bodyReceivedResolve();
