@@ -291,7 +291,7 @@ class Chrome extends Browser {
       ) {
         this.stats.browserResponseReady(this.appName);
         this.response = response;
-        if ('true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1) {
+        if (!this.executionFinished && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1) {
           const fileAttachment = contentDispositionHeader.split(';');
           if (fileAttachment.length > 0) {
             this.fileAttachment = fileAttachment[1].trim().replace('filename="', '').replace('"', '');
