@@ -287,14 +287,15 @@ class Chrome extends Browser {
       const contentDispositionHeader = response && response.headers && response.headers['content-disposition'];
       if (!this.executionFinished &&
         (type === 'Document' && (this.response === null || this.response.status === 302)) ||
-        (null !== this.options && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1)
+        (null !== this.options && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('filename') > -1)
       ) {
         this.stats.browserResponseReady(this.appName);
         this.response = response;
-        if (!this.executionFinished && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('attachment') > -1) {
+        if (!this.executionFinished && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('filename') > -1) {
           const fileAttachment = contentDispositionHeader.split(';');
           if (fileAttachment.length > 0) {
             this.fileAttachment = fileAttachment[1].trim().replace('filename="', '').replace('"', '');
+            this.loadEventFired(Runtime, Input, Network, Page);
           }
         }
         this.responseReceivedResolve();
