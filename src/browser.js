@@ -3,19 +3,6 @@ const rimraf = require('rimraf');
 
 class HeadlessBrowser {
 
-  /**
-   * @param  {object} options
-   * options.stats
-   * options.appPath
-   * options.url
-   * options.proxy
-   * options.userAgent
-   * options.linkedInLiAt
-   * options.performLogin
-   * options.xvfb
-   * options.bodyWait
-   * options.ajaxWait
-   */
   constructor(options) {
     this.cleanProperties();
     do {
