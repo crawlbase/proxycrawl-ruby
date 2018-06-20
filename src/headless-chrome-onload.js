@@ -9,8 +9,11 @@ Object.defineProperty(navigator, 'languages', {
 // overwrite the `plugins` property to use a custom getter
 Object.defineProperty(navigator, 'plugins', {
   get: function() {
-    // this just needs to have `length > 0`, but we could mock the plugins too
-    return [1, 2, 3, 4, 5];
+    return [
+      { MimeType: { type: 'application/x-google-chrome-pdf', suffixes: 'pdf', description: 'Portable Document Format',          enabledPlugin: {} }, description: 'Portable Document Format', filename: 'internal-pdf-viewer',              length: 1, name: 'Chrome PDF Plugin' },
+      { MimeType: { type: 'application/pdf',                 suffixes: 'pdf', description: '',                                  enabledPlugin: {} }, description: '',                         filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', length: 1, name: 'Chrome PDF Viewer' },
+      { MimeType: { type: 'application/x-pnacl',             suffixes: '',    description: 'Portable Native Client Executable', enabledPlugin: {} }, description: '',                         filename: 'internal-nacl-plugin',             length: 2, name: 'Native Client' }
+    ];
   }
 });
 
