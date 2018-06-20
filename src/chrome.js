@@ -207,7 +207,8 @@ class Chrome extends Browser {
       this.interceptionEnabledPromise(Network),
       this.linkedInCookiePromise(Network),
       this.cookiePromise(Network),
-      this.downloadBehaviorPromise(Page)
+      this.downloadBehaviorPromise(Page),
+      this.extraHTTPHeadersPromise(Network)
     ]).then(() => {
       if (this.executionFinished) { return; }
       if ((this.isLinkedIn || this.isTicketmaster) && this.options.loadAdditionalData) {
@@ -450,6 +451,21 @@ class Chrome extends Browser {
       return Page.setDownloadBehavior({ behavior: 'allow', downloadPath });
     } else {
       return Page.setDownloadBehavior({ behavior: 'deny' });
+    }
+  }
+
+  extraHTTPHeadersPromise(Network) {
+    if (this.options.additionalHeaders) {
+      const headers = {};
+      this.options.additionalHeaders.split('|').map((header) => {
+        const colonPosition = header.indexOf(':');
+        if (colonPosition > -1) {
+          headers[header.substring(0, colonPosition).trim()] = header.substring(colonPosition + 1, header.length).trim();
+        }
+      });
+      return Network.setExtraHTTPHeaders({ headers });
+    } else {
+      return Promise.resolve();
     }
   }
 
