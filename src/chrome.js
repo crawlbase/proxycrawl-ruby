@@ -400,12 +400,12 @@ class Chrome extends Browser {
   }
 
   linkedInCookiePromise() {
-    return new Promise((resolve) => resolve());
+    return Promise.resolve();
   }
 
   cookiePromise(Network) {
     if (!this.options.cookie || this.options.cookie === null || this.options.cookie === '') {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
     const cookies = this.options.cookie.split(';');
     const cookiesArray = [];
@@ -442,7 +442,7 @@ class Chrome extends Browser {
     if (this.options.userAgent) {
       return Network.setUserAgentOverride({ userAgent: this.options.userAgent });
     } else {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
   }
 
