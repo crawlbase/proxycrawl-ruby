@@ -184,7 +184,7 @@ class Chrome extends Browser {
       return mainPromise;
     }
 
-    if (detectProxyFail && this.browser !== null && this.browser._ws._socket) {
+    if (detectProxyFail && null !== this.browser && this.browser._ws._socket) {
       if (detectProxyConnectFail) {
         this.openSocketTimeout = setTimeout(() => this.proxyTimeoutError('on connect'), proxyOpenTimeout);
         this.browser._ws._socket.on('connect', () => clearTimeout(this.openSocketTimeout));
