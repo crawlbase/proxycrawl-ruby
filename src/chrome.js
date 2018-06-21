@@ -199,6 +199,7 @@ class Chrome extends Browser {
     Promise.all([
       Network.enable(),
       Page.enable(),
+      this.runtimeEnablePromise(Runtime),
       Page.addScriptToEvaluateOnNewDocument({ source: onloadScript }),
       Network.clearBrowserCache(),
       Network.clearBrowserCookies(),
@@ -226,6 +227,8 @@ class Chrome extends Browser {
       if (this.executionFinished) { return; }
       if (this.isLinkedIn || this.isTicketmaster) {
         this.body = this.body.replace('</body>', this.additionalBodyData + '</body>');
+      } else if (this.isAliexpress) {
+        this.body = this.body.replace('Dequed', '');
       }
       this.finishExecution();
     }).catch((e) => log('Error while waiting all promises to complete: ' + e.message));
@@ -254,9 +257,7 @@ class Chrome extends Browser {
 
   static waitForNodeToAppear(Runtime, selector, timesToCheck = 100) {
     return new Promise((resolve, reject) => {
-      Runtime.evaluate({
-        expression: `document.querySelector('${selector}')`
-      }).then(async (result) => {
+      Runtime.evaluate({ expression: `document.querySelector('${selector}')` }).then(async (result) => {
         if (result.result.objectId) {
           return resolve();
         }
@@ -464,6 +465,14 @@ class Chrome extends Browser {
         }
       });
       return Network.setExtraHTTPHeaders({ headers });
+    } else {
+      return Promise.resolve();
+    }
+  }
+
+  runtimeEnablePromise(Runtime) {
+    if (this.isAliexpress) {
+      return Runtime.enable();
     } else {
       return Promise.resolve();
     }
