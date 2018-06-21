@@ -37,10 +37,13 @@ class ChromeAliexpress extends Chrome {
         document.getElementById('fm-login-submit').dispatchEvent(event);`;
         Runtime.evaluate({ expression: js, contextId: this.loginIframeContextId }).catch((err) => {
           if (this.executionFinished) { return; }
-          log('Error visiting Aliexpress: ' + err.message);
+          if (this.response === null) {
+            this.response = { status: 999 };
+            this.stats.browserResponseReady(this.appName);
+            this.responseReceivedResolve();
+          }
           this.body = 'Error on browser';
-          this.response = { status: 999 };
-          this.stats.browserBodyReady(this.appName);
+          log('Error visiting Aliexpress: ' + err.message);
           this.finishExecution();
         });
       } else {

@@ -383,7 +383,7 @@ class Chrome extends Browser {
       if (locationUrl.indexOf('https://ipv6.google.com/sorry') > -1) {
         this.response = { status: 503 };
       } else if (locationUrl === 'chrome-error://chromewebdata/') {
-        log('Error 999: chrome-error://chromewebdata/');
+        log('Error 999 when checking url: chrome-error://chromewebdata/');
         this.response = { status: 999 };
       }
       if (this.response !== null && this.responseReceivedResolve !== null) {
@@ -391,7 +391,7 @@ class Chrome extends Browser {
         this.responseReceivedResolve();
       }
     }).catch((e) => {
-      if (this.response === null) {
+      if (!this.executionFinished && this.response === null) {
         this.response = { status: 999 };
         this.stats.browserResponseReady(this.appName);
         this.responseReceivedResolve();
