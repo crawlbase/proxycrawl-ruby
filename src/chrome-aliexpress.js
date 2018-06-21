@@ -44,6 +44,10 @@ class ChromeAliexpress extends Chrome {
           this.finishExecution();
         });
       } else {
+        Runtime.evaluate({ expression: 'document.location.href' }).then((result) => {
+          if (this.executionFinished) { return; }
+          this.response.url = result.result.value;
+        });
         this.evaluateBody(Runtime);
       }
     });
