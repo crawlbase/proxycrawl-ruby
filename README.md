@@ -22,7 +22,7 @@ Or install it yourself as:
 
 Initialize the API with one of your account tokens, either normal or javascript token. Then make get or post requests accordingly.
 
-You can get a token for free by creating a ProxyCrawl account and 1000 free testing requests. You can use them for tcp calls or javascript calls or both.
+You can get a token for free by [creating a ProxyCrawl account](https://proxycrawl.com/signup) and 1000 free testing requests. You can use them for tcp calls or javascript calls or both.
 
 ```ruby
   api = ProxyCrawl::API.new(token: 'YOUR_TOKEN')
