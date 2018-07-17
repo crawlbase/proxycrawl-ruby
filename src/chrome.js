@@ -441,7 +441,7 @@ class Chrome extends Browser {
   }
 
   userAgentOverridePromise(Network) {
-    if (this.options.userAgent) {
+    if (null !== this.options && this.options.userAgent) {
       return Network.setUserAgentOverride({ userAgent: this.options.userAgent });
     } else {
       return Promise.resolve();
