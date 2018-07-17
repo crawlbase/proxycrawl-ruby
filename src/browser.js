@@ -6,7 +6,7 @@ class HeadlessBrowser {
   constructor(options) {
     this.cleanProperties();
     do {
-      this.debuggerPort = getRandomInt(9001, 19998);
+      this.debuggerPort = getRandomInt(9001, 19997);
     } while (this.debuggerPort === 9222);
     this.sessionDir = `/tmp/${this.appName.toLowerCase()}-headless-${getRandomInt(10, 99999)}`;
     this.stats = options.stats;
