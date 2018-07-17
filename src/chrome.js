@@ -91,7 +91,8 @@ const chromeCommonFlags = [
   '--safebrowsing-disable-auto-update',
   '--use-mock-keychain',
   '--window-size=1318,1001',
-  '--profile-directory=Default'
+  '--profile-directory=Default',
+  '--user-gesture-required' // Disable autoplay of videos
 ];
 var onloadScript = '';
 
