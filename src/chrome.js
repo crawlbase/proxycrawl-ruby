@@ -339,7 +339,9 @@ class Chrome extends Browser {
 
   async evaluateBody(Runtime) {
     if (this.executionFinished) { return; }
-    this.browser._ws._socket.setTimeout(0);
+    if (null !== this.browser._ws._socket) {
+      this.browser._ws._socket.setTimeout(0);
+    }
     if (!this.executionFinished && this.options.bodyWait && this.options.bodyWait > 0) {
       await new Promise((resolve) => setTimeout(() => resolve(), this.options.bodyWait));
       if (this.executionFinished) { return; }
