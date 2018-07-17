@@ -47,7 +47,14 @@ const blockedUrls = [
   'https://truimg.toysrus.com/*',
   'https://tags.tiqcdn.com/*',
   'https://*.go-mpulse.net/*',
-  'https://sync.adaptv.advertising.com/*'
+  'https://sync.adaptv.advertising.com/*',
+  // Amazon
+  'https://images-na.ssl-images-amazon.com/*',
+  'https://www.amazon.com/favicon.ico',
+  'https://m.media-amazon.com/*',
+  'https://www.amazon.com/gp/uedata*',
+  'https://fls-na.amazon.com/*',
+  'https://s.amazon-adsystem.com/*'
 ];
 const chromeCommonFlags = [
   // '--auto-open-devtools-for-tabs',
