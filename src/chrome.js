@@ -17,6 +17,7 @@ const blockedUrls = [
   'https://www.gstatic.com/og/*',
   'https://apis.google.com/*',
   'https://adservice.google*',
+  'https://www.google.*/xjs/_/js/*',
   // Linkedin
   'https://static-exp*.licdn.com/scds/concat/common/css*',
   'https://static-exp*.licdn.com/scds/common/u/images/*',
