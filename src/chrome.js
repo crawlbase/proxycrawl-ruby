@@ -416,7 +416,7 @@ class Chrome extends Browser {
   }
 
   cookiePromise(Network) {
-    if (!this.options.cookie || this.options.cookie === null || this.options.cookie === '') {
+    if (this.options === null || !this.options.cookie || this.options.cookie === null || this.options.cookie === '') {
       return Promise.resolve();
     }
     const cookies = this.options.cookie.split(';');
