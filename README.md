@@ -25,7 +25,7 @@ Initialize the API with one of your account tokens, either normal or javascript 
 You can get a token for free by [creating a ProxyCrawl account](https://proxycrawl.com/signup) and 1000 free testing requests. You can use them for tcp calls or javascript calls or both.
 
 ```ruby
-  api = ProxyCrawl::API.new(token: 'YOUR_TOKEN')
+api = ProxyCrawl::API.new(token: 'YOUR_TOKEN')
 ```
 
 ### GET requests
@@ -143,3 +143,7 @@ The gem is available as open source under the terms of the [MIT License](http://
 ## Code of Conduct
 
 Everyone interacting in the Proxycrawl project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/proxycrawl/proxycrawl-ruby/blob/master/CODE_OF_CONDUCT.md).
+
+---
+
+Copyright 2018 ProxyCrawl
