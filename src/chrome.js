@@ -55,7 +55,13 @@ const blockedUrls = [
   'https://m.media-amazon.com/*',
   'https://www.amazon.com/gp/uedata*',
   'https://fls-na.amazon.com/*',
-  'https://s.amazon-adsystem.com/*'
+  'https://s.amazon-adsystem.com/*',
+  // mouser.cn
+  'https://hb.crm2.qq.com/*',
+  'https://msr.chinalytics.cn/*',
+  'http://msr.chinalytics.cn/*',
+  'http://static.hotjar.com/*',
+  'http://tajs.qq.com/*'
 ];
 const chromeCommonFlags = [
   // '--auto-open-devtools-for-tabs',
