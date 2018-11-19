@@ -134,6 +134,7 @@ class Chrome extends Browser {
     this.openSocketTimeout = null;
     this.pendingAjaxCalls = 0;
     this.fileAttachment = null;
+    this.responseReadySent = false;
   }
 
   async start() {
@@ -293,7 +294,10 @@ class Chrome extends Browser {
     });
     Network.requestWillBeSent(({ type, redirectResponse }) => {
       if (type === 'Document' && this.response === null && redirectResponse && !this.executionFinished) {
-        this.stats.browserResponseReady(this.appName);
+        if (!this.responseReadySent) {
+          this.stats.browserResponseReady(this.appName);
+          this.responseReadySent = true;
+        }
         this.response = redirectResponse;
         this.responseReceivedResolve();
       } else if (type === 'XHR' && !this.executionFinished && this.options.ajaxWait === 'true') {
@@ -306,7 +310,10 @@ class Chrome extends Browser {
         (type === 'Document' && (this.response === null || this.response.status === 302)) ||
         (null !== this.options && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('filename') > -1)
       ) {
-        this.stats.browserResponseReady(this.appName);
+        if (!this.responseReadySent) {
+          this.stats.browserResponseReady(this.appName);
+          this.responseReadySent = true;
+        }
         this.response = response;
         if (!this.executionFinished && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('filename') > -1) {
           const fileAttachment = contentDispositionHeader.split(';');
@@ -404,13 +411,19 @@ class Chrome extends Browser {
         this.response = { status: 999 };
       }
       if (this.response !== null && this.responseReceivedResolve !== null) {
-        this.stats.browserResponseReady(this.appName);
+        if (!this.responseReadySent) {
+          this.stats.browserResponseReady(this.appName);
+          this.responseReadySent = true;
+        }
         this.responseReceivedResolve();
       }
     }).catch((e) => {
       if (!this.executionFinished && this.response === null) {
         this.response = { status: 999 };
-        this.stats.browserResponseReady(this.appName);
+        if (!this.responseReadySent) {
+          this.stats.browserResponseReady(this.appName);
+          this.responseReadySent = true;
+        }
         this.responseReceivedResolve();
       }
       log('Error while evaluating document.location.href: ' + e.message);
@@ -497,8 +510,9 @@ class Chrome extends Browser {
 
   proxyTimeoutError(type) {
     if (this.executionFinished) { return; }
-    if (this.response === null) {
+    if (this.response === null && !this.responseReadySent) {
       this.stats.browserResponseReady(this.appName);
+      this.responseReadySent = true;
     }
     if (this.body === null || this.body === '') {
       this.stats.browserBodyReady(this.appName);
