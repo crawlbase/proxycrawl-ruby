@@ -10,7 +10,7 @@ class FirefoxLinkedIn extends Firefox {
     this.isLinkedIn = true;
     this.options.loadAdditionalData = false;
     if (this.options.performLogin) {
-      log('Login is not supported in Firefox');
+      log('Login is not supported in Firefox', this.caller);
     }
   }
 
@@ -69,7 +69,7 @@ class FirefoxLinkedIn extends Firefox {
       return setTimeout(() => this.evaluateBody(), 5000);
     }).catch((err) => {
       if (this.executionFinished) { return; }
-      log('Error visiting linkedin from Google: ' + err.message);
+      log('Error visiting linkedin from Google: ' + err.message, this.caller);
       this.body = 'Error on browser';
       this.stats.browserBodyResponseReady(this.appName);
       this.response = { status: 999 };
@@ -98,7 +98,7 @@ class FirefoxLinkedIn extends Firefox {
       return setTimeout(() => this.evaluateBody(), 5000);
     }).catch((err) => {
       if (this.executionFinished) { return; }
-      log('Error when loading linkedin page: ' + err.message);
+      log('Error when loading linkedin page: ' + err.message, this.caller);
       this.body = 'Error on browser';
       this.stats.browserBodyResponseReady(this.appName);
       this.response = { status: 999 };

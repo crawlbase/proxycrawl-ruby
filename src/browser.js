@@ -13,6 +13,7 @@ class HeadlessBrowser {
     this.options = options;
     this.stats.browserNewRequestStart(this.appName);
     this.executionFinished = false;
+    this.caller = this.options.caller;
   }
 
   cleanProperties() {
@@ -35,6 +36,7 @@ class HeadlessBrowser {
     this.bodyReceivedResolve = null;
     this.browserInstance = null;
     this.browser = null;
+    this.caller = null;
   }
 
   generateErrorAtStart(errorMessage, errorBody = '') {

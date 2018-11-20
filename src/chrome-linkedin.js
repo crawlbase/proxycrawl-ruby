@@ -82,7 +82,7 @@ class ChromeLinkedIn extends Chrome {
         this.options.url = this.realUrl;
       }).catch((err) => {
         if (this.executionFinished) { return; }
-        log('Error visiting linkedin from Google: ' + err.message);
+        log('Error visiting linkedin from Google: ' + err.message, this.caller);
         this.body = 'Error on browser';
         this.response = { status: 999 };
         this.finishExecution();
@@ -132,7 +132,7 @@ class ChromeLinkedIn extends Chrome {
       return setTimeout(() => this.evaluateBody(Runtime), 5000);
     }).catch((err) => {
       if (this.executionFinished) { return; }
-      log('Error visiting linkedin with cookie: ' + err.message);
+      log('Error visiting linkedin with cookie: ' + err.message, this.caller);
       this.body = 'Error on browser';
       this.response = { status: 999 };
       this.stats.browserBodyResponseReady(this.appName);
@@ -146,7 +146,7 @@ class ChromeLinkedIn extends Chrome {
       return setTimeout(() => this.evaluateBody(Runtime), 5000);
     }).catch((err) => {
       if (this.executionFinished) { return; }
-      log('Error visiting linkedin with method 3: ' + err.message);
+      log('Error visiting linkedin with method 3: ' + err.message, this.caller);
       this.body = 'Error on browser';
       this.response = { status: 999 };
       this.stats.browserBodyResponseReady(this.appName);
@@ -192,7 +192,7 @@ class ChromeLinkedIn extends Chrome {
       method: 'CONNECT',
       path: 'www.linkedin.com:443'
     });
-    proxyTunnel.on('error', (error) => log(error));
+    proxyTunnel.on('error', (error) => log(error, this.caller));
     proxyTunnel.on('connect', (res, socket) => {
       if (res.statusCode !== 200) {
         recommendationsResolve();

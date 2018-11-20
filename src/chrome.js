@@ -110,8 +110,12 @@ const chromeCommonFlags = [
 ];
 var onloadScript = '';
 
-function log(text) {
-  return console.log('CR: ' + text);
+function log(text, caller = '') {
+  if (null === caller || '' === caller) {
+    return console.log('CR: ' + text);
+  } else {
+    return console.log('CR [' + caller + ']: ' + text);
+  }
 }
 
 fs.readFile(__dirname + '/headless-chrome-onload.js', 'utf8', (err, data) => {
@@ -247,7 +251,7 @@ class Chrome extends Browser {
         this.body = this.body.replace('Dequed', '');
       }
       this.finishExecution();
-    }).catch((e) => log('Error while waiting all promises to complete: ' + e.message));
+    }).catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
 
     return mainPromise;
   }
@@ -338,10 +342,10 @@ class Chrome extends Browser {
       try {
         const scriptResult = await this.evaluateJavascript(Runtime);
         if (!this.executionFinished && scriptResult.exceptionDetails) {
-          log('Javascript evaluation promise rejected: ' + scriptResult.exceptionDetails.exception.value);
+          log('Javascript evaluation promise rejected: ' + scriptResult.exceptionDetails.exception.value, this.caller);
           this.response = { status: 595 };
         }
-      } catch (e) { log('Error while evaluating passed javascript command'); }
+      } catch (e) { log('Error while evaluating passed javascript command', this.caller); }
     }
     this.evaluateBody(Runtime);
   }
@@ -395,7 +399,7 @@ class Chrome extends Browser {
         this.stats.browserBodyReady(this.appName);
         this.bodyReceivedResolve();
       }
-      log('Error while evaluating outerHTML: ' + e.message);
+      log('Error while evaluating outerHTML: ' + e.message, this.caller);
     });
 
     // This is in case Network couldn't detect the redirect for blocked Google
@@ -407,7 +411,7 @@ class Chrome extends Browser {
       if (locationUrl.indexOf('https://ipv6.google.com/sorry') > -1) {
         this.response = { status: 503 };
       } else if (locationUrl === 'chrome-error://chromewebdata/') {
-        log('Error 999 when checking url: chrome-error://chromewebdata/');
+        log('Error 999 when checking url: chrome-error://chromewebdata/', this.caller);
         this.response = { status: 999 };
       }
       if (this.response !== null && this.responseReceivedResolve !== null) {
@@ -426,7 +430,7 @@ class Chrome extends Browser {
         }
         this.responseReceivedResolve();
       }
-      log('Error while evaluating document.location.href: ' + e.message);
+      log('Error while evaluating document.location.href: ' + e.message, this.caller);
     });
   }
 
@@ -518,7 +522,7 @@ class Chrome extends Browser {
       this.stats.browserBodyReady(this.appName);
     }
     this.body = 'Proxy timeout';
-    log('Proxy ' + this.options.proxy + ' ' + type + ' timeout');
+    log('Proxy ' + this.options.proxy + ' ' + type + ' timeout', this.caller);
     this.response = { status: 999 };
     return this.finishExecution();
   }
@@ -538,14 +542,14 @@ class Chrome extends Browser {
         }
         this.browser.close();
       } catch (e) {
-        log('Error while trying to close Chrome: ' + e.message);
+        log('Error while trying to close Chrome: ' + e.message, this.caller);
       }
     }
     if (this.browserInstance !== null) {
       try {
         this.browserInstance.kill();
       } catch (e) {
-        log('Error while trying to kill Chrome: ' + e.message);
+        log('Error while trying to kill Chrome: ' + e.message, this.caller);
       }
     }
     if (this.pid !== null) {

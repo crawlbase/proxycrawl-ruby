@@ -43,7 +43,7 @@ class ChromeAliexpress extends Chrome {
             this.responseReceivedResolve();
           }
           this.body = 'Error on browser';
-          log('Error visiting Aliexpress: ' + err.message);
+          log('Error visiting Aliexpress: ' + err.message, this.caller);
           this.finishExecution();
         });
       } else {

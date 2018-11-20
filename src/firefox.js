@@ -5,8 +5,12 @@ const Browser = require('./browser.js');
 const { getRandomInt } = require('./utils.js');
 const killTimeout = 60000;
 
-function log(text) {
-  return console.log('FF: ' + text);
+function log(text, caller = '') {
+  if (null === caller || '' === caller) {
+    return console.log('FF: ' + text);
+  } else {
+    return console.log('FF [' + caller + ']: ' + text);
+  }
 }
 
 class Firefox extends Browser {
@@ -82,7 +86,7 @@ class Firefox extends Browser {
       //   this.body = this.body.replace('</body>', this.additionalBodyData + '</body>');
       // }
       this.finishExecution();
-    }).catch((e) => log('Error while waiting all promises to complete: ' + e.message));
+    }).catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
 
     return mainPromise;
   }
@@ -158,7 +162,7 @@ class Firefox extends Browser {
       this.stats.browserBodyReady(this.appName);
       this.bodyReceivedResolve();
       this.evaluateResponseCode();
-      log('Error on getPageSource(): ' + e.message);
+      log('Error on getPageSource(): ' + e.message, this.caller);
     });
   }
 
@@ -189,9 +193,7 @@ class Firefox extends Browser {
 
   closeBrowser() {
     if (this.driver !== null) {
-      this.driver.quit().catch((e) => {
-        log('Error while closing Firefox: ' + e.message);
-      });
+      this.driver.quit().catch((e) => log('Error while closing Firefox: ' + e.message, this.caller));
     }
     if (this.pid !== null) {
       const pid = this.pid * 1;
