@@ -380,7 +380,9 @@ class Chrome extends Browser {
     if (null !== this.fileAttachment && fs.existsSync(downloadPath + '/' + this.fileAttachment)) {
       this.body = fs.readFileSync(downloadPath + '/' + this.fileAttachment);
       this.stats.browserBodyReady(this.appName);
-      fs.unlinkSync(downloadPath + '/' + this.fileAttachment);
+      try {
+        fs.unlinkSync(downloadPath + '/' + this.fileAttachment);
+      } catch (e) { /* do nothing */ }
       return this.bodyReceivedResolve();
     }
     Runtime.evaluate({ expression: 'document.documentElement.outerHTML' }).then((result) => {
