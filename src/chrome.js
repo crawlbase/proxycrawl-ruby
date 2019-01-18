@@ -50,9 +50,9 @@ const blockedUrls = [
   'https://*.go-mpulse.net/*',
   'https://sync.adaptv.advertising.com/*',
   // Amazon
-  'https://images-na.ssl-images-amazon.com/*',
+  // 'https://images-na.ssl-images-amazon.com/*', // Cannot block, breaks ajax
   'https://www.amazon.com/favicon.ico',
-  'https://m.media-amazon.com/*',
+  // 'https://m.media-amazon.com/*', // Cannot block, breaks ajax
   'https://www.amazon.com/gp/uedata*',
   'https://fls-na.amazon.com/*',
   'https://s.amazon-adsystem.com/*',
