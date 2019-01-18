@@ -136,7 +136,7 @@ class Chrome extends Browser {
     this.additionalBodyResolve = null;
     this.additionalBodyData = null;
     this.openSocketTimeout = null;
-    this.pendingAjaxCalls = 0;
+    this.pendingAjaxCalls = [];
     this.fileAttachment = null;
     this.responseReadySent = false;
   }
@@ -296,7 +296,7 @@ class Chrome extends Browser {
       const blocked = request.url.indexOf('https://adservice.google') > -1 || this.executionFinished;
       Network.continueInterceptedRequest({ interceptionId, errorReason: blocked ? 'Aborted' : undefined }).catch(() => { /* do nothing */ });
     });
-    Network.requestWillBeSent(({ type, redirectResponse }) => {
+    Network.requestWillBeSent(({ requestId, type, redirectResponse }) => {
       if (type === 'Document' && this.response === null && redirectResponse && !this.executionFinished) {
         if (!this.responseReadySent) {
           this.stats.browserResponseReady(this.appName);
@@ -305,10 +305,10 @@ class Chrome extends Browser {
         this.response = redirectResponse;
         this.responseReceivedResolve();
       } else if (type === 'XHR' && !this.executionFinished && this.options.ajaxWait === 'true') {
-        this.pendingAjaxCalls++;
+        this.pendingAjaxCalls.push(requestId);
       }
     });
-    Network.responseReceived(({ type, response }) => {
+    Network.responseReceived(({ requestId, type, response }) => {
       const contentDispositionHeader = response && response.headers && response.headers['content-disposition'];
       if (!this.executionFinished &&
         (type === 'Document' && (this.response === null || this.response.status === 302)) ||
@@ -328,7 +328,13 @@ class Chrome extends Browser {
         }
         this.responseReceivedResolve();
       } else if (type === 'XHR' && !this.executionFinished && this.options.ajaxWait === 'true') {
-        this.pendingAjaxCalls--;
+        this.pendingAjaxCalls = this.pendingAjaxCalls.filter((item) => item !== requestId);
+      }
+    });
+    Network.loadingFailed(({ requestId }) => {
+      const index = this.pendingAjaxCalls.indexOf(requestId);
+      if (index > -1) {
+        this.pendingAjaxCalls.splice(index, 1);
       }
     });
     Page.loadEventFired(() => {
@@ -372,7 +378,7 @@ class Chrome extends Browser {
       if (this.executionFinished) { return; }
     }
     if (!this.executionFinished && this.options.ajaxWait === 'true') {
-      while (!this.executionFinished && this.pendingAjaxCalls > 0) {
+      while (!this.executionFinished && this.pendingAjaxCalls.length > 0) {
         await new Promise((resolve) => setTimeout(() => resolve(), 500));
       }
       if (this.executionFinished) { return; }
