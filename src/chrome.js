@@ -545,7 +545,7 @@ class Chrome extends Browser {
           try {
             this.browser.Network.setRequestInterceptionEnabled({ enabled: false }).catch(() => { /* do nothing */ });
           } catch (e) {
-            //this.browser.Network.setRequestInterception([]).catch(() => { /* do nothing */ });
+            // this.browser.Network.setRequestInterception([]).catch(() => { /* do nothing */ });
           }
         }
         this.browser.close();
