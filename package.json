@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "selenium-webdriver": "^3.6.0",
-    "chrome-remote-interface": "^0.27.0",
+    "chrome-remote-interface": "^0.27.1",
     "geckodriver": "^1.14.1",
     "rimraf": "^2.6.3"
   }
