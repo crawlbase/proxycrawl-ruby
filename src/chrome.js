@@ -77,7 +77,7 @@ const chromeCommonFlags = [
   '--disable-smooth-scrolling',
   '--disable-translate',
   '--disable-translate-new-ux',
-  '--disable-webgl',
+  // '--disable-webgl',
   '--disable-composited-antialiasing',
   '--disable-extensions-http-throttling',
   '--no-default-browser-check',

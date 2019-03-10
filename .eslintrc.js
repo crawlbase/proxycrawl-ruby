@@ -24,5 +24,8 @@ module.exports = {
       "always"
     ]
   },
-  "globals": {}
+  "globals": {
+    "Notification": true,
+    "HTMLIFrameElement": true
+  }
 };
