@@ -11,9 +11,9 @@ class HeadlessBrowser {
     this.sessionDir = `/tmp/${this.appName.toLowerCase()}-headless-${getRandomInt(10, 99999)}`;
     this.stats = options.stats;
     this.options = options;
-    this.stats.browserNewRequestStart(this.appName);
-    this.executionFinished = false;
     this.caller = this.options.caller;
+    this.stats.browserNewRequestStart(this.appName, this.caller);
+    this.executionFinished = false;
   }
 
   cleanProperties() {
