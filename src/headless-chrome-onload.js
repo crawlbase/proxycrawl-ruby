@@ -104,3 +104,11 @@ window._clickElement = function(element) {
     cancelable: true
   }));
 };
+window._sendKeys = function(element, text) {
+  [...text].forEach(key => {
+    element.dispatchEvent(new MouseEvent('keydown', { key }));
+    element.dispatchEvent(new MouseEvent('keypress', { key }));
+    element.value += key;
+    element.dispatchEvent(new MouseEvent('keyup', { key }));
+  });
+};
