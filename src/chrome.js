@@ -388,7 +388,7 @@ class Chrome extends Browser {
       if (this.executionFinished) { return; }
     }
     if (!this.executionFinished && this.options.screenshot === 'true' && Page) {
-      this.screenshotData = await Page.captureScreenshot({
+      this.screenshotData = 'data:image/jpeg;base64,' + await Page.captureScreenshot({
         format: 'jpeg',
         quality: 80
       });
