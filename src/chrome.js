@@ -138,6 +138,7 @@ class Chrome extends Browser {
     this.openSocketTimeout = null;
     this.pendingAjaxCalls = [];
     this.fileAttachment = null;
+    this.screenshotData = null;
     this.responseReadySent = false;
   }
 
@@ -250,6 +251,9 @@ class Chrome extends Browser {
       } else if (this.isAliexpress) {
         this.body = this.body.replace('Dequed', '');
       }
+      if (this.screenshotData !== null && this.options.screenshot === 'true' && this.response) {
+        this.response['screenshot'] = this.screenshotData;
+      }
       this.finishExecution();
     }).catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
 
@@ -343,7 +347,7 @@ class Chrome extends Browser {
     });
   }
 
-  async loadEventFired(Runtime) {
+  async loadEventFired(Runtime, Input, Network, Page) {
     if (this.options.evaluateJavascript) {
       try {
         const scriptResult = await this.evaluateJavascript(Runtime);
@@ -353,7 +357,7 @@ class Chrome extends Browser {
         }
       } catch (e) { log('Error while evaluating passed javascript command', this.caller); }
     }
-    this.evaluateBody(Runtime);
+    this.evaluateBody(Runtime, Page);
   }
 
   evaluateJavascript(Runtime) {
@@ -368,7 +372,7 @@ class Chrome extends Browser {
     });
   }
 
-  async evaluateBody(Runtime) {
+  async evaluateBody(Runtime, Page) {
     if (this.executionFinished) { return; }
     if (null !== this.browser._ws._socket) {
       this.browser._ws._socket.setTimeout(0);
@@ -381,6 +385,13 @@ class Chrome extends Browser {
       while (!this.executionFinished && this.pendingAjaxCalls.length > 0) {
         await new Promise((resolve) => setTimeout(() => resolve(), 500));
       }
+      if (this.executionFinished) { return; }
+    }
+    if (!this.executionFinished && this.options.screenshot === 'true' && Page) {
+      this.screenshotData = await Page.captureScreenshot({
+        format: 'jpeg',
+        quality: 80
+      });
       if (this.executionFinished) { return; }
     }
     if (null !== this.fileAttachment && fs.existsSync(downloadPath + '/' + this.fileAttachment)) {
