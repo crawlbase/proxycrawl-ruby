@@ -252,7 +252,7 @@ class Chrome extends Browser {
         this.body = this.body.replace('Dequed', '');
       }
       if (this.screenshotData !== null && this.options.screenshot === 'true') {
-        this.body = '<screenshot>' + this.screenshotData.data + '</screenshot>';
+        this.body = '<screenshot>' + this.screenshotData.data + '</screenshot>' + this.body;
       }
       this.finishExecution();
     }).catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
