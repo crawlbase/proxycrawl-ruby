@@ -2,6 +2,7 @@ const { spawn } = require('child_process');
 const CDP = require('chrome-remote-interface');
 const fs = require('fs');
 const Browser = require('./browser.js');
+const { getRandomInt } = require('./utils.js');
 const killTimeout = 60000;
 const detectProxyFail = true;
 const proxyFailTimeout = 10000;
@@ -104,7 +105,6 @@ const chromeCommonFlags = [
   '--no-first-run',
   '--safebrowsing-disable-auto-update',
   '--use-mock-keychain',
-  '--window-size=1318,1001',
   '--profile-directory=Default',
   '--user-gesture-required' // Disable autoplay of videos
 ];
@@ -140,6 +140,7 @@ class Chrome extends Browser {
     this.fileAttachment = null;
     this.screenshotData = null;
     this.responseReadySent = false;
+    this.windowSize = null;
   }
 
   async start() {
@@ -154,7 +155,12 @@ class Chrome extends Browser {
     this.stats.browserNewRequest(this.appName);
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
 
-    const chromeFlags = ['--remote-debugging-port=' + this.debuggerPort, '--user-data-dir=' + this.sessionDir];
+    this.windowSize = { width: getRandomInt(1280, 3000), height: getRandomInt(800, 2000) };
+    const chromeFlags = [
+      '--remote-debugging-port=' + this.debuggerPort,
+      '--user-data-dir=' + this.sessionDir,
+      '--window-size=' + this.windowSize.width + ',' + this.windowSize.height
+    ];
     if (this.isLambda) {
       Array.prototype.push.apply(chromeFlags, this.chromeFlags);
     } else {
