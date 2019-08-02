@@ -155,7 +155,7 @@ class Chrome extends Browser {
     this.stats.browserNewRequest(this.appName);
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
 
-    this.windowSize = { width: getRandomInt(1280, 3000), height: getRandomInt(800, 2000) };
+    this.windowSize = { width: getRandomInt(1280, 2300), height: getRandomInt(800, 2000) };
     const chromeFlags = [
       '--remote-debugging-port=' + this.debuggerPort,
       '--user-data-dir=' + this.sessionDir,
@@ -394,10 +394,7 @@ class Chrome extends Browser {
       if (this.executionFinished) { return; }
     }
     if (!this.executionFinished && this.options.screenshot === 'true' && Page) {
-      this.screenshotData = await Page.captureScreenshot({
-        format: 'jpeg',
-        quality: 80
-      });
+      this.screenshotData = await this.takeScreenshot(Page, this.browser.Emulation, this.browser.DOM);
       if (this.executionFinished) { return; }
     }
     if (null !== this.fileAttachment && fs.existsSync(downloadPath + '/' + this.fileAttachment)) {
@@ -535,6 +532,30 @@ class Chrome extends Browser {
     } else {
       return Promise.resolve();
     }
+  }
+
+  async takeScreenshot(Page, Emulation, DOM) {
+    const { root: { nodeId: documentNodeId } } = await DOM.getDocument();
+    const { nodeId: bodyNodeId } = await DOM.querySelector({
+      selector: 'body',
+      nodeId: documentNodeId,
+    });
+    const { model: { height }} = await DOM.getBoxModel({nodeId: bodyNodeId});
+    const deviceMetrics = {
+      width: this.windowSize.width,
+      height: height,
+      deviceScaleFactor: 1,
+      mobile: false,
+      fitWindow: false,
+    };
+    if (this.executionFinished) { return; }
+    await Emulation.setDeviceMetricsOverride(deviceMetrics);
+    await Emulation.setVisibleSize({ width: this.windowSize.width, height: height });
+    if (this.executionFinished) { return; }
+    return await Page.captureScreenshot({
+      format: 'jpeg',
+      quality: 80
+    });
   }
 
   proxyTimeoutError(type) {
