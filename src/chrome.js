@@ -540,7 +540,7 @@ class Chrome extends Browser {
       selector: 'body',
       nodeId: documentNodeId,
     });
-    const { model: { height }} = await DOM.getBoxModel({nodeId: bodyNodeId});
+    const { model: { height } } = await DOM.getBoxModel({ nodeId: bodyNodeId });
     const deviceMetrics = {
       width: this.windowSize.width,
       height: height,
