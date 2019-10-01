@@ -12,7 +12,7 @@
   "dependencies": {
     "selenium-webdriver": "^3.6.0",
     "chrome-remote-interface": "^0.28.0",
-    "geckodriver": "^1.16.2",
+    "geckodriver": "^1.18.0",
     "rimraf": "^3.0.0"
   }
 }
