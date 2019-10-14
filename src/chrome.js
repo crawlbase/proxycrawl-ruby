@@ -171,7 +171,7 @@ class Chrome extends Browser {
       }
       if (this.options.xvfb === 'true') {
         chromeFlags.push('--display=:99');
-      } else {
+      } else if (this.options.noHeadless !== 'true') {
         chromeFlags.push('--headless');
       }
       if (this.options.enableImages !== 'true') {
