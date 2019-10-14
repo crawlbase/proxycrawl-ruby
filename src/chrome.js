@@ -111,11 +111,16 @@ const chromeCommonFlags = [
 var onloadScript = '';
 
 function log(text, caller = '') {
+  let message;
   if (null === caller || '' === caller) {
-    return console.log('CR: ' + text);
+    message = 'CR: ' + text;
   } else {
-    return console.log('CR [' + caller + ']: ' + text);
+    message = 'CR [' + caller + ']: ' + text;
   }
+  if (undefined !== global.Loki) {
+    global.Loki.log('Error ' + message);
+  }
+  return console.log(message);
 }
 
 fs.readFile(__dirname + '/headless-chrome-onload.js', 'utf8', (err, data) => {
