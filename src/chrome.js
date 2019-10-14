@@ -321,7 +321,7 @@ class Chrome extends Browser {
     Network.responseReceived(({ requestId, type, response }) => {
       const contentDispositionHeader = response && response.headers && response.headers['content-disposition'];
       if (!this.executionFinished &&
-        (type === 'Document' && (this.response === null || this.response.status === 302)) ||
+        (type === 'Document' && (this.response === null || this.response.status === 302 || this.response.status === 503)) ||
         (null !== this.options && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('filename') > -1)
       ) {
         if (!this.responseReadySent) {
