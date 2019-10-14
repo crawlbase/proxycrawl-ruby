@@ -110,14 +110,14 @@ const chromeCommonFlags = [
 ];
 var onloadScript = '';
 
-function log(text, caller = '') {
+function log(text, caller = '', logLoki = true) {
   let message;
   if (null === caller || '' === caller) {
     message = 'CR: ' + text;
   } else {
     message = 'CR [' + caller + ']: ' + text;
   }
-  if (undefined !== global.Loki) {
+  if (undefined !== global.Loki && logLoki) {
     global.Loki.log('Error ' + message);
   }
   return console.log(message);
@@ -576,7 +576,7 @@ class Chrome extends Browser {
       this.stats.browserBodyReady(this.appName);
     }
     this.body = 'Proxy timeout';
-    log('Proxy ' + this.options.proxy + ' ' + type + ' timeout', this.caller);
+    log('Proxy ' + this.options.proxy + ' ' + type + ' timeout', this.caller, false);
     this.response = { status: 999 };
     return this.finishExecution();
   }
