@@ -441,7 +441,7 @@ class Chrome extends Browser {
       if (locationUrl.indexOf('https://ipv6.google.com/sorry') > -1) {
         this.response = { status: 503 };
       } else if (locationUrl === 'chrome-error://chromewebdata/') {
-        log('Error 999 when checking url: chrome-error://chromewebdata/', this.caller);
+        log('Error 999 when checking url: ' + this.options.url + ' chrome-error://chromewebdata/', this.caller);
         this.response = { status: 999 };
       }
       if (this.response !== null && this.responseReceivedResolve !== null) {
