@@ -3,13 +3,14 @@ Object.defineProperty(navigator, 'languages', {
   get: () => ['en-US', 'en']
 });
 
-Object.defineProperty(navigator, 'plugins', {
-  get: () => [
-    { MimeType: { type: 'application/x-google-chrome-pdf', suffixes: 'pdf', description: 'Portable Document Format',          enabledPlugin: {} }, description: 'Portable Document Format', filename: 'internal-pdf-viewer',              length: 1, name: 'Chrome PDF Plugin' },
-    { MimeType: { type: 'application/pdf',                 suffixes: 'pdf', description: '',                                  enabledPlugin: {} }, description: '',                         filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', length: 1, name: 'Chrome PDF Viewer' },
-    { MimeType: { type: 'application/x-pnacl',             suffixes: '',    description: 'Portable Native Client Executable', enabledPlugin: {} }, description: '',                         filename: 'internal-nacl-plugin',             length: 2, name: 'Native Client' }
-  ]
-});
+// Removed temporarily as it breaks some sites
+// Object.defineProperty(navigator, 'plugins', {
+//   get: () => [
+//     { MimeType: { type: 'application/x-google-chrome-pdf', suffixes: 'pdf', description: 'Portable Document Format',          enabledPlugin: {} }, description: 'Portable Document Format', filename: 'internal-pdf-viewer',              length: 1, name: 'Chrome PDF Plugin' },
+//     { MimeType: { type: 'application/pdf',                 suffixes: 'pdf', description: '',                                  enabledPlugin: {} }, description: '',                         filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai', length: 1, name: 'Chrome PDF Viewer' },
+//     { MimeType: { type: 'application/x-pnacl',             suffixes: '',    description: 'Portable Native Client Executable', enabledPlugin: {} }, description: '',                         filename: 'internal-nacl-plugin',             length: 2, name: 'Native Client' }
+//   ]
+// });
 
 Object.defineProperty(navigator, 'doNotTrack', {
   get: () => '1'
@@ -80,11 +81,12 @@ window.console.debug = () => {
   return null;
 };
 
-Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
-  get: function() {
-    return window;
-  }
-});
+// Removed temporarily as it breaks some sites
+// Object.defineProperty(HTMLIFrameElement.prototype, 'contentWindow', {
+//   get: function() {
+//     return window;
+//   }
+// });
 
 window.innerWidth = 1920;
 window.innerHeight = 1130;
