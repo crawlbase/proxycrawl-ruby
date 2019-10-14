@@ -258,6 +258,9 @@ class Chrome extends Browser {
         this.body = this.body.replace('Dequed', '');
       }
       if (this.screenshotData !== null && this.options.screenshot === 'true') {
+        if ('darwin' === process.platform) { // Write screenshot to disk in Mac for testing
+          fs.writeFile('screenshot.jpg', this.screenshotData.data, 'base64', console.log);
+        }
         this.body = '<screenshot>' + this.screenshotData.data + '</screenshot>' + this.body;
       }
       this.finishExecution();
