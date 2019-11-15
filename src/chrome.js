@@ -51,6 +51,16 @@ const blockedUrls = [
   'https://*.go-mpulse.net/*',
   'https://sync.adaptv.advertising.com/*',
   // Amazon
+  'https://images-na.ssl-images-amazon.com/images/*.css*',
+  'https://images-na.ssl-images-amazon.com/images/*/AmazonExports/*',
+  'https://www.amazon.com/gp/redirection/*_new.html',
+  'https://images-na.ssl-images-amazon.com/images/*/AUIClients/ClientSideMetricsAUIJavascript*',
+  'https://www.amazon.com/ah/ajax/counter*',
+  'https://unagi-na.amazon.com/1/events/com.amazon.csm.nexusclient.prod',
+  'https://www.amazon.com/gp/product/sessionCacheUpdateHandler.html',
+  'https://www.amazon.com/gp/overlay/display.html',
+  'https://images-na.ssl-images-amazon.com/images/I/*.jpg',
+  'https://www.amazon.com/gp/recent-history-footer/external/rhf-handler.html',
   // 'https://images-na.ssl-images-amazon.com/*', // Cannot block, breaks ajax
   'https://www.amazon.com/favicon.ico',
   // 'https://m.media-amazon.com/*', // Cannot block, breaks ajax
