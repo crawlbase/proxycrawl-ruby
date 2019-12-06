@@ -22,7 +22,6 @@ class HeadlessBrowser {
     }
     this.forceKillTimeout = null;
     this.isLinkedIn = false;
-    this.isAliexpress = false;
     this.isTicketmaster = false;
     this.isLambda = false;
     this.debuggerPort = null;

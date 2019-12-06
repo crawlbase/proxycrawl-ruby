@@ -241,7 +241,6 @@ class Chrome extends Browser {
     Promise.all([
       Network.enable(),
       Page.enable(),
-      this.runtimeEnablePromise(Runtime),
       Page.addScriptToEvaluateOnNewDocument({ source: onloadScript }),
       Network.clearBrowserCache(),
       Network.clearBrowserCookies(),
@@ -269,8 +268,6 @@ class Chrome extends Browser {
       if (this.executionFinished) { return; }
       if (this.isLinkedIn || this.isTicketmaster) {
         this.body = this.body.replace('</body>', this.additionalBodyData + '</body>');
-      } else if (this.isAliexpress) {
-        this.body = this.body.replace('Dequed', '');
       }
       if (this.screenshotData !== null && this.options.screenshot === 'true') {
         if ('darwin' === process.platform) { // Write screenshot to disk in Mac for testing
@@ -539,14 +536,6 @@ class Chrome extends Browser {
         }
       });
       return Network.setExtraHTTPHeaders({ headers });
-    } else {
-      return Promise.resolve();
-    }
-  }
-
-  runtimeEnablePromise(Runtime) {
-    if (this.isAliexpress) {
-      return Runtime.enable();
     } else {
       return Promise.resolve();
     }
