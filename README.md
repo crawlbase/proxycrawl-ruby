@@ -152,4 +152,4 @@ Everyone interacting in the Proxycrawl project’s codebases, issue trackers, ch
 
 ---
 
-Copyright 2019 ProxyCrawl
+Copyright 2020 ProxyCrawl
