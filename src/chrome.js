@@ -51,6 +51,7 @@ const blockedUrls = [
   'https://*.go-mpulse.net/*',
   'https://sync.adaptv.advertising.com/*',
   // Amazon
+  // Please note that no url will be blocked for Amazon screenshots
   'https://images-na.ssl-images-amazon.com/images/*.css*',
   'https://images-na.ssl-images-amazon.com/images/*/AmazonExports/*',
   'https://www.amazon.com/gp/redirection/*_new.html',
@@ -237,6 +238,11 @@ class Chrome extends Browser {
     const { Network, Page, Runtime, Input } = this.browser;
 
     this.addEvents(Network, Page, Runtime, Input);
+
+    // Remove all blocked urls if we take a screenshot of amazon page
+    if ('true' === this.options.screenshot && this.options.url.indexOf('amazon.') > -1) {
+      blockedUrls.splice(0, blockedUrls.length);
+    }
 
     Promise.all([
       Network.enable(),
