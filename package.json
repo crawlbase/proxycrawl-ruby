@@ -1,9 +1,8 @@
 {
-  "name": "headless-browser",
+  "name": "@devandgo/headless-browser",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "private": true,
   "scripts": {
     "test": "node test.js"
   },
@@ -14,5 +13,8 @@
     "chrome-remote-interface": "^0.28.1",
     "geckodriver": "^1.19.1",
     "rimraf": "^3.0.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.devandgo.com:2096"
   }
 }
