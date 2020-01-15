@@ -6,7 +6,7 @@
   "scripts": {
     "test": "node test.js"
   },
-  "author": "",
+  "author": "Devandgo",
   "license": "ISC",
   "dependencies": {
     "selenium-webdriver": "^3.6.0",
