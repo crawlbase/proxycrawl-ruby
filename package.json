@@ -12,7 +12,7 @@
     "selenium-webdriver": "^3.6.0",
     "chrome-remote-interface": "^0.28.1",
     "geckodriver": "^1.19.1",
-    "rimraf": "^3.0.0"
+    "rimraf": "^3.0.2"
   },
   "publishConfig": {
     "registry": "https://npm.devandgo.com:2096"
