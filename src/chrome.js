@@ -9,6 +9,9 @@ const proxyFailTimeout = 10000;
 const detectProxyConnectFail = false;
 const proxyOpenTimeout = 5000;
 const downloadPath = 'darwin' === process.platform ? '/Users/adria/Downloads' : '/tmp';
+const longerSocketTimeoutDomains = [
+  'web.facebook.com',
+];
 const blockedUrls = [
   // Google
   'https://ssl.gstatic.com/*/images/*',
@@ -232,7 +235,10 @@ class Chrome extends Browser {
         this.openSocketTimeout = setTimeout(() => this.proxyTimeoutError('on connect'), proxyOpenTimeout);
         this.browser._ws._socket.on('connect', () => clearTimeout(this.openSocketTimeout));
       }
-      this.browser._ws._socket.setTimeout(proxyFailTimeout, () => this.proxyTimeoutError('connection'));
+      const domain = new URL(this.options.url).hostname;
+      // Some domains require longer socket timeouts as they take longer to stablish the connection for some reason
+      const finalProxyFailTimeout = longerSocketTimeoutDomains.indexOf(domain) === -1 ? proxyFailTimeout : proxyFailTimeout * 3;
+      this.browser._ws._socket.setTimeout(finalProxyFailTimeout, () => this.proxyTimeoutError('connection'));
     }
 
     const { Network, Page, Runtime, Input } = this.browser;
