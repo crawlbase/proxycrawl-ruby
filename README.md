@@ -1,4 +1,4 @@
-# Proxycrawl
+# ProxyCrawl
 
 Dependency free gem for scraping and crawling websites using the ProxyCrawl API.
 
