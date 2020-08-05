@@ -11,7 +11,7 @@
   "dependencies": {
     "selenium-webdriver": "^3.6.0",
     "chrome-remote-interface": "^0.28.2",
-    "geckodriver": "^1.19.1",
+    "geckodriver": "^1.20.0",
     "rimraf": "^3.0.2"
   },
   "publishConfig": {
