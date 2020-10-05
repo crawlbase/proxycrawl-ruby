@@ -5,7 +5,7 @@ const Browser = require('./browser.js');
 const { getRandomInt } = require('./utils.js');
 const killTimeout = 60000;
 const detectProxyFail = true;
-const proxyFailTimeout = 10000;
+const proxyFailTimeout = 15000;
 const detectProxyConnectFail = false;
 const proxyOpenTimeout = 5000;
 const downloadPath = 'darwin' === process.platform ? '/Users/adria/Downloads' : '/tmp';
