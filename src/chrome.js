@@ -11,6 +11,7 @@ const proxyOpenTimeout = 5000;
 const downloadPath = 'darwin' === process.platform ? '/Users/adria/Downloads' : '/tmp';
 const longerSocketTimeoutDomains = [
   'web.facebook.com',
+  'www.amazon.com',
 ];
 const blockedUrls = [
   // Google
