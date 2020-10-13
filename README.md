@@ -156,6 +156,22 @@ rescue => exception
 end
 ```
 
+## Leads API usage
+
+Initialize with your Leads API token and call the `get` method.
+
+```ruby
+leads_api = ProxyCrawl::LeadsAPI.new(token: 'YOUR_TOKEN')
+
+begin
+  response = leads_api.get('stripe.com')
+  puts response.status_code
+  puts response.body
+rescue => exception
+  puts exception.backtrace
+end
+```
+
 If you have questions or need help using the library, please open an issue or [contact us](https://proxycrawl.com/contact).
 
 ## Development
