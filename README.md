@@ -18,7 +18,7 @@ Or install it yourself as:
 
     $ gem install proxycrawl
 
-## Usage
+## Crawling API Usage
 
 Require the gem in your project
 
@@ -128,6 +128,48 @@ response = api.get('https://sfbay.craigslist.org/')
 
 puts response.original_status
 puts response.pc_status
+```
+
+## Scraper API usage
+
+Initialize the Scraper API using your normal token and call the `get` method.
+
+```ruby
+scraper_api = ProxyCrawl::ScraperAPI.new(token: 'YOUR_TOKEN')
+```
+
+Pass the url that you want to scrape plus any options from the ones available in the [Scraper API documentation](https://proxycrawl.com/docs/scraper-api/parameters).
+
+```ruby
+api.get(url, options)
+```
+
+Example:
+
+```ruby
+begin
+  response = scraper_api.get('https://www.amazon.com/Halo-SleepSack-Swaddle-Triangle-Neutral/dp/B01LAG1TOS')
+  puts response.status_code
+  puts response.body
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+## Leads API usage
+
+Initialize with your Leads API token and call the `get` method.
+
+```ruby
+leads_api = ProxyCrawl::LeadsAPI.new(token: 'YOUR_TOKEN')
+
+begin
+  response = leads_api.get('stripe.com')
+  puts response.status_code
+  puts response.body
+rescue => exception
+  puts exception.backtrace
+end
 ```
 
 If you have questions or need help using the library, please open an issue or [contact us](https://proxycrawl.com/contact).
