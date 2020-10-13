@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'net/http'
 require 'json'
 require 'uri'
@@ -6,8 +7,6 @@ require 'uri'
 module ProxyCrawl
   class API
     attr_reader :token, :body, :status_code, :original_status, :pc_status, :url
-
-    BASE_URL = 'https://api.proxycrawl.com'
 
     INVALID_TOKEN = 'Token is required'
     INVALID_URL = 'URL is required'
@@ -58,15 +57,19 @@ module ProxyCrawl
 
     private
 
+    def base_url
+      'https://api.proxycrawl.com'
+    end
+
     def prepare_uri(url, options)
-      uri = URI(BASE_URL)
+      uri = URI(base_url)
       uri.query = URI.encode_www_form({ token: @token, url: url }.merge(options))
 
       uri
     end
 
     def prepare_response(response, format)
-      if format == 'json'
+      if format == 'json' || base_url.include?('/scraper')
         @status_code = response.code.to_i
         @body = response.body
       else
