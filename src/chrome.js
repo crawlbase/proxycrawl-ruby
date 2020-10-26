@@ -294,6 +294,9 @@ class Chrome extends Browser {
         }
         this.body = '<screenshot>' + this.screenshotData.data + '</screenshot>' + this.body;
       }
+      if ('true' === this.options.captureIframes && this.body.indexOf('<pc-iframes></pc-iframes>') > -1) {
+        this.body = this.body.replace('<pc-iframes></pc-iframes>', ''); // Don't return zero iframes
+      }
       this.finishExecution();
     }).catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
 
@@ -446,11 +449,7 @@ class Chrome extends Browser {
       if ((this.body !== null && this.body !== '') || this.executionFinished) {
         return;
       }
-      if ('true' === this.options.captureIframes) {
-        this.body = result.result.value.replace('<pc-iframes></pc-iframes>', ''); // Don't return zero iframes
-      } else {
-        this.body = result.result.value;
-      }
+      this.body = result.result.value;
       this.stats.browserBodyReady(this.appName);
       if (this.isLinkedIn) {
         this.linkedInResponseCode();
