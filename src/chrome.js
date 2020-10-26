@@ -194,6 +194,12 @@ class Chrome extends Browser {
       } else if (this.options.noHeadless !== 'true') {
         chromeFlags.push('--headless');
       }
+      if (this.options.captureIframes === 'true') {
+        chromeFlags.push(
+          '--disable-web-security',
+          '--disable-features=IsolateOrigins,site-per-process',
+        );
+      }
       if (this.options.enableImages !== 'true') {
         chromeFlags.push('--blink-settings=imagesEnabled=false');
       }
@@ -433,11 +439,18 @@ class Chrome extends Browser {
       } catch (e) { /* do nothing */ }
       return this.bodyReceivedResolve();
     }
-    Runtime.evaluate({ expression: 'document.documentElement.outerHTML' }).then((result) => {
+    const captureExpression = 'true' === this.options.captureIframes ?
+      '`<pc-iframes>${[...document.querySelectorAll(\'iframe\')].map(e => e.contentWindow.document.documentElement.outerHTML).join(\'\')}</pc-iframes>${document.documentElement.outerHTML}`' :
+      'document.documentElement.outerHTML';
+    Runtime.evaluate({ expression: captureExpression }).then((result) => {
       if ((this.body !== null && this.body !== '') || this.executionFinished) {
         return;
       }
-      this.body = result.result.value;
+      if ('true' === this.options.captureIframes) {
+        this.body = result.result.value.replace('<pc-iframes></pc-iframes>', ''); // Don't return zero iframes
+      } else {
+        this.body = result.result.value;
+      }
       this.stats.browserBodyReady(this.appName);
       if (this.isLinkedIn) {
         this.linkedInResponseCode();
