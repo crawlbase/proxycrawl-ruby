@@ -294,8 +294,21 @@ class Chrome extends Browser {
         }
         this.body = '<screenshot>' + this.screenshotData.data + '</screenshot>' + this.body;
       }
-      if ('true' === this.options.captureIframes && this.body.indexOf('<pc-iframes></pc-iframes>') > -1) {
-        this.body = this.body.replace('<pc-iframes></pc-iframes>', ''); // Don't return zero iframes
+      if ('true' === this.options.captureIframes) {
+        if (this.body.indexOf('<pc-iframes></pc-iframes>') > -1) {
+          this.body = this.body.replace('<pc-iframes></pc-iframes>', ''); // Don't return zero iframes
+        } else {
+          // Replace the empty iframes with the actual iframe content
+          const { parse } = require('node-html-parser');
+          const splitIframes = this.body.split('</pc-iframes>');
+          const root = parse(splitIframes[0].replace('<pc-iframes>', ''));
+          root.childNodes.forEach(node => {
+            // const iframeTagRegex = new RegExp(`<iframe ${node.rawAttrs}>([\w\s]|.*)</iframe>`, 'gis');
+            const iframeTag = `<iframe ${node.rawAttrs}></iframe>`;
+            splitIframes[1] = splitIframes[1].replace(iframeTag, node.toString());
+          });
+          this.body = splitIframes[1];
+        }
       }
       this.finishExecution();
     }).catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
@@ -443,7 +456,7 @@ class Chrome extends Browser {
       return this.bodyReceivedResolve();
     }
     const captureExpression = 'true' === this.options.captureIframes ?
-      '`<pc-iframes>${[...document.querySelectorAll(\'iframe\')].map(e => e.contentWindow.document.documentElement.outerHTML).join(\'\')}</pc-iframes>${document.documentElement.outerHTML}`' :
+      '`<pc-iframes>${[...document.querySelectorAll(\'iframe\')].map(e => { e.innerHTML = \'\'; return e.outerHTML.replace(\'</iframe>\', e.contentWindow.document.documentElement.outerHTML + \'<\\iframe>\'); }).join(\'\')}</pc-iframes>${document.documentElement.outerHTML}`' :
       'document.documentElement.outerHTML';
     Runtime.evaluate({ expression: captureExpression }).then((result) => {
       if ((this.body !== null && this.body !== '') || this.executionFinished) {
