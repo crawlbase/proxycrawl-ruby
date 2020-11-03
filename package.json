@@ -6,6 +6,10 @@
   "scripts": {
     "test": "node test.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/devandgo/headless-browser.git"
+  },
   "author": "Devandgo",
   "license": "ISC",
   "dependencies": {
@@ -15,7 +19,17 @@
     "rimraf": "^3.0.2",
     "selenium-webdriver": "^3.6.0"
   },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "husky": "^4.3.0"
+  },
   "publishConfig": {
     "registry": "https://npm.devandgo.com:2096"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   }
 }
