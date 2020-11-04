@@ -25,7 +25,7 @@
     "husky": "^4.3.0"
   },
   "publishConfig": {
-    "registry": "https://npm.devandgo.com:2096"
+    "registry": "https://npm.devandgo.com"
   },
   "husky": {
     "hooks": {

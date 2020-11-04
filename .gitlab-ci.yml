@@ -10,4 +10,4 @@ stages:
 # Overrides
 tag:
   environment:
-    url: https://npm.devandgo.com:2096/-/web/detail/@devandgo/headless-browser
+    url: https://npm.devandgo.com/-/web/detail/@devandgo/headless-browser
