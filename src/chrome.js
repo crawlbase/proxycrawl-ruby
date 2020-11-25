@@ -491,7 +491,7 @@ class Chrome extends Browser {
         this.screenshotData = await this.takeScreenshot(Page, this.browser.Emulation, this.browser.DOM);
       } catch (e) {
         if (global.logger) {
-          logger.error(`Failed to take screenshot for page ${this.options.url}`);
+          logger.error(`Failed to take screenshot for page ${this.options.url} => ${e.message}`);
           this.body = 'Error';
           this.stats.browserBodyReady(this.appName);
           this.bodyReceivedResolve();
