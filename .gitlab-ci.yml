@@ -1,11 +1,11 @@
 # Import tasks
 include:
-  - project: 'devandgo/gitlab-helper'
-    file: '/templates/ci/tag-semantic-release.yml'
+  - project: 'devandgo/gitlab-templates'
+    file: '/ci/tag-semantic-release.yml'
 
 # Define stages
 stages:
- - tag
+  - tag
 
 # Overrides
 tag:
