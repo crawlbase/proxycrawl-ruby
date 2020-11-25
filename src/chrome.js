@@ -236,7 +236,7 @@ class Chrome extends Browser {
       const { client } = await this.findChromeDebugger();
       this.browser = client;
     } catch (e) {
-      this.generateErrorAtStart("Error couldn't load browser on port: " + this.debuggerPort);
+      this.generateErrorAtStart(`Error couldn't load browser on port ${this.debuggerPort}: ${e.message}`);
       return mainPromise;
     }
 
