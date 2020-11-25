@@ -487,7 +487,17 @@ class Chrome extends Browser {
       }
     }
     if (!this.executionFinished && this.options.screenshot === 'true' && Page) {
-      this.screenshotData = await this.takeScreenshot(Page, this.browser.Emulation, this.browser.DOM);
+      try {
+        this.screenshotData = await this.takeScreenshot(Page, this.browser.Emulation, this.browser.DOM);
+      } catch (e) {
+        if (global.logger) {
+          logger.error(`Failed to take screenshot for page ${this.options.url}`);
+          this.body = 'Error';
+          this.stats.browserBodyReady(this.appName);
+          this.bodyReceivedResolve();
+          return;
+        }
+      }
       if (this.executionFinished) {
         return;
       }
