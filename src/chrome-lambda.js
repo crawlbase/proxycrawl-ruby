@@ -1,7 +1,6 @@
 const { Chrome } = require('./chrome.js');
 
 class ChromeLambda extends Chrome {
-
   get chromeFlags() {
     return [
       '--single-process',
@@ -34,7 +33,7 @@ class ChromeLambda extends Chrome {
       '--disk-cache-size=10000000',
       '--ipc-connection-timeout=10000',
       '--media-cache-size=10000000',
-      '--window-size=1918,1071'
+      '--window-size=1918,1071',
     ];
   }
 
@@ -46,7 +45,6 @@ class ChromeLambda extends Chrome {
   interceptionEnabledPromise() {
     return new Promise((resolve) => resolve());
   }
-
 }
 
 module.exports = { ChromeLambda };

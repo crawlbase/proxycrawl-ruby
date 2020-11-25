@@ -1,6 +1,6 @@
 /* global navigator, window, document, MouseEvent */
 Object.defineProperty(navigator, 'languages', {
-  get: () => ['en-US', 'en']
+  get: () => ['en-US', 'en'],
 });
 
 // Removed temporarily as it breaks some sites
@@ -13,7 +13,7 @@ Object.defineProperty(navigator, 'languages', {
 // });
 
 Object.defineProperty(navigator, 'doNotTrack', {
-  get: () => '1'
+  get: () => '1',
 });
 
 const newProto = navigator.__proto__;
@@ -23,58 +23,56 @@ navigator.__proto__ = newProto;
 Notification = {
   permission: 'default',
   maxActions: 2,
-  requestPermission: function() {}
+  requestPermission: function () {},
 };
 
 const originalQuery = window.navigator.permissions.query;
-window.navigator.permissions.__proto__.query = parameters =>
-  parameters.name === 'notifications'
-    ? Promise.resolve({ state: Notification.permission })
-    : originalQuery(parameters);
+window.navigator.permissions.__proto__.query = (parameters) =>
+  parameters.name === 'notifications' ? Promise.resolve({ state: Notification.permission }) : originalQuery(parameters);
 
-  const oldCall = Function.prototype.call;
-  function call() {
-      return oldCall.apply(this, arguments);
+const oldCall = Function.prototype.call;
+function call() {
+  return oldCall.apply(this, arguments);
+}
+Function.prototype.call = call;
+
+const nativeToStringFunctionString = Error.toString().replace(/Error/g, 'toString');
+const oldToString = Function.prototype.toString;
+
+function functionToString() {
+  if (this === window.navigator.permissions.query) {
+    return 'function query() { [native code] }';
   }
-  Function.prototype.call = call;
-
-  const nativeToStringFunctionString = Error.toString().replace(/Error/g, 'toString');
-  const oldToString = Function.prototype.toString;
-
-  function functionToString() {
-    if (this === window.navigator.permissions.query) {
-      return 'function query() { [native code] }';
-    }
-    if (this === functionToString) {
-      return nativeToStringFunctionString;
-    }
-    return oldCall.call(oldToString, this);
+  if (this === functionToString) {
+    return nativeToStringFunctionString;
   }
-  Function.prototype.toString = functionToString;
+  return oldCall.call(oldToString, this);
+}
+Function.prototype.toString = functionToString;
 
 window.chrome = {
-  loadTimes: function() {},
-  csi: function() {},
+  loadTimes: function () {},
+  csi: function () {},
   app: {
     isInstalled: false,
-    getDetails: function() {},
-    getIsInstalled: function() {},
-    installState: function() {},
-    runningState: function() {},
+    getDetails: function () {},
+    getIsInstalled: function () {},
+    installState: function () {},
+    runningState: function () {},
     InstallState: {},
-    RunningState: {}
+    RunningState: {},
   },
   runtime: {
     id: undefined,
-    connect: function() {},
-    sendMessage: function() {},
+    connect: function () {},
+    sendMessage: function () {},
     OnInstalledReason: {},
     OnRestartRequiredReason: {},
     PlatformArch: {},
     PlatformNaclArch: {},
     PlatformOs: {},
     RequestUpdateCheckStatus: {},
-  }
+  },
 };
 
 window.console.debug = () => {
@@ -93,21 +91,23 @@ window.innerHeight = 1130;
 window.outerWidth = 1920;
 window.outerHeight = 1210;
 
-window._delay = async function(delayTime) {
+window._delay = async function (delayTime) {
   return new Promise((resolve) => setTimeout(() => resolve(), delayTime));
 };
-window._scrollBottom = function() {
+window._scrollBottom = function () {
   window.scrollTo(0, document.body.scrollHeight);
 };
-window._clickElement = function(element) {
-  element.dispatchEvent(new MouseEvent('click', {
-    view: window,
-    bubbles: true,
-    cancelable: true
-  }));
+window._clickElement = function (element) {
+  element.dispatchEvent(
+    new MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true,
+    })
+  );
 };
-window._sendKeys = function(element, text) {
-  [...text].forEach(key => {
+window._sendKeys = function (element, text) {
+  [...text].forEach((key) => {
     element.dispatchEvent(new MouseEvent('keydown', { key }));
     element.dispatchEvent(new MouseEvent('keypress', { key }));
     element.value += key;

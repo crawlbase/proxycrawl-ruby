@@ -2,7 +2,6 @@ const { getRandomInt } = require('./utils.js');
 const rimraf = require('rimraf');
 
 class HeadlessBrowser {
-
   constructor(options) {
     this.cleanProperties();
     do {
@@ -52,8 +51,10 @@ class HeadlessBrowser {
   }
 
   forceKillTimeoutFunction() {
-    if (this.executionFinished) { return; }
-    this.log(`Force kill ${this.appName} after ${(this.killTimeout / 1000)}s timeout`);
+    if (this.executionFinished) {
+      return;
+    }
+    this.log(`Force kill ${this.appName} after ${this.killTimeout / 1000}s timeout`);
     if (this.response === null) {
       this.stats.browserResponseReady(this.appName);
     }
@@ -67,12 +68,20 @@ class HeadlessBrowser {
 
   finishExecution() {
     // Make sure we only finish execution once
-    if (this.executionFinished) { return; }
+    if (this.executionFinished) {
+      return;
+    }
     this.executionFinished = true;
     this.startResolve({ response: this.response, body: this.body });
-    if (this.bodyReceivedResolve !== null) { this.bodyReceivedResolve(); }
-    if (this.responseReceivedResolve !== null) { this.responseReceivedResolve(); }
-    if (this.additionalBodyResolve && this.additionalBodyResolve !== null) { this.additionalBodyResolve(); }
+    if (this.bodyReceivedResolve !== null) {
+      this.bodyReceivedResolve();
+    }
+    if (this.responseReceivedResolve !== null) {
+      this.responseReceivedResolve();
+    }
+    if (this.additionalBodyResolve && this.additionalBodyResolve !== null) {
+      this.additionalBodyResolve();
+    }
     this.closeBrowser();
     this.stats.browserRemoveActiveInstance(this.appName);
     let index = this.stats.activeIds.indexOf(this.pid);
@@ -82,7 +91,6 @@ class HeadlessBrowser {
     rimraf(this.sessionDir, () => {});
     this.cleanProperties();
   }
-
 }
 
 module.exports = HeadlessBrowser;

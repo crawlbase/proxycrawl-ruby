@@ -9,10 +9,7 @@ const proxyFailTimeout = 15000;
 const detectProxyConnectFail = false;
 const proxyOpenTimeout = 5000;
 const downloadPath = 'darwin' === process.platform ? '/Users/adria/Downloads' : '/tmp';
-const longerSocketTimeoutDomains = [
-  'web.facebook.com',
-  'www.amazon.com',
-];
+const longerSocketTimeoutDomains = ['web.facebook.com', 'www.amazon.com'];
 const blockedUrls = [
   // Google
   'https://ssl.gstatic.com/*/images/*',
@@ -77,7 +74,7 @@ const blockedUrls = [
   'https://msr.chinalytics.cn/*',
   'http://msr.chinalytics.cn/*',
   'http://static.hotjar.com/*',
-  'http://tajs.qq.com/*'
+  'http://tajs.qq.com/*',
 ];
 const chromeCommonFlags = [
   // '--auto-open-devtools-for-tabs',
@@ -121,7 +118,7 @@ const chromeCommonFlags = [
   '--safebrowsing-disable-auto-update',
   '--use-mock-keychain',
   '--profile-directory=Default',
-  '--user-gesture-required' // Disable autoplay of videos
+  '--user-gesture-required', // Disable autoplay of videos
 ];
 var onloadScript = '';
 
@@ -146,10 +143,15 @@ fs.readFile(__dirname + '/headless-chrome-onload.js', 'utf8', (err, data) => {
 });
 
 class Chrome extends Browser {
-
-  get log() { return log; }
-  get appName() { return 'Chrome'; }
-  get killTimeout() { return (this.options && this.options.killTimeout) || killTimeout; }
+  get log() {
+    return log;
+  }
+  get appName() {
+    return 'Chrome';
+  }
+  get killTimeout() {
+    return (this.options && this.options.killTimeout) || killTimeout;
+  }
 
   cleanProperties() {
     super.cleanProperties();
@@ -164,13 +166,15 @@ class Chrome extends Browser {
   }
 
   async start() {
-    const mainPromise = new Promise((resolve) => this.startResolve = resolve);
-    const responseReceivedPromise = new Promise((resolve) => this.responseReceivedResolve = resolve);
-    const bodyReceivedPromise = new Promise((resolve) => this.bodyReceivedResolve = resolve);
-    const additionalBodyPromise = new Promise((resolve) => this.additionalBodyResolve = resolve);
+    const mainPromise = new Promise((resolve) => (this.startResolve = resolve));
+    const responseReceivedPromise = new Promise((resolve) => (this.responseReceivedResolve = resolve));
+    const bodyReceivedPromise = new Promise((resolve) => (this.bodyReceivedResolve = resolve));
+    const additionalBodyPromise = new Promise((resolve) => (this.additionalBodyResolve = resolve));
     try {
       fs.mkdirSync(this.sessionDir);
-    } catch (e) { /* if folder exists, do nothing */ }
+    } catch (e) {
+      /* if folder exists, do nothing */
+    }
 
     this.stats.browserNewRequest(this.appName);
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
@@ -179,7 +183,7 @@ class Chrome extends Browser {
     const chromeFlags = [
       '--remote-debugging-port=' + this.debuggerPort,
       '--user-data-dir=' + this.sessionDir,
-      '--window-size=' + this.windowSize.width + ',' + this.windowSize.height
+      '--window-size=' + this.windowSize.width + ',' + this.windowSize.height,
     ];
     if (this.isLambda) {
       Array.prototype.push.apply(chromeFlags, this.chromeFlags);
@@ -195,10 +199,7 @@ class Chrome extends Browser {
         chromeFlags.push('--headless');
       }
       if (this.options.captureIframes === 'true') {
-        chromeFlags.push(
-          '--disable-web-security',
-          '--disable-features=IsolateOrigins,site-per-process',
-        );
+        chromeFlags.push('--disable-web-security', '--disable-features=IsolateOrigins,site-per-process');
       }
       if (this.options.enableImages !== 'true') {
         chromeFlags.push('--blink-settings=imagesEnabled=false');
@@ -209,7 +210,9 @@ class Chrome extends Browser {
     }
 
     try {
-      this.browserInstance = spawn(this.options.appPath, chromeFlags, { detached: true }).on('error', (err) => { throw err; });
+      this.browserInstance = spawn(this.options.appPath, chromeFlags, { detached: true }).on('error', (err) => {
+        throw err;
+      });
       if (this.isLambda) {
         // Unref process, so that it doesn't prevent the Lambda request from finishing
         this.browserInstance.unref();
@@ -223,7 +226,7 @@ class Chrome extends Browser {
     }
 
     if (this.browserInstance.pid === undefined) {
-      this.generateErrorAtStart('Browser couldn\'t be opened');
+      this.generateErrorAtStart("Browser couldn't be opened");
       return mainPromise;
     }
     this.pid = this.browserInstance.pid.toString();
@@ -233,7 +236,7 @@ class Chrome extends Browser {
       const { client } = await this.findChromeDebugger();
       this.browser = client;
     } catch (e) {
-      this.generateErrorAtStart('Error couldn\'t load browser on port: ' + this.debuggerPort);
+      this.generateErrorAtStart("Error couldn't load browser on port: " + this.debuggerPort);
       return mainPromise;
     }
 
@@ -244,7 +247,8 @@ class Chrome extends Browser {
       }
       const domain = new URL(this.options.url).hostname;
       // Some domains require longer socket timeouts as they take longer to stablish the connection for some reason
-      const finalProxyFailTimeout = longerSocketTimeoutDomains.indexOf(domain) === -1 ? proxyFailTimeout : proxyFailTimeout * 3;
+      const finalProxyFailTimeout =
+        longerSocketTimeoutDomains.indexOf(domain) === -1 ? proxyFailTimeout : proxyFailTimeout * 3;
       this.browser._ws._socket.setTimeout(finalProxyFailTimeout, () => this.proxyTimeoutError('connection'));
     }
 
@@ -269,49 +273,60 @@ class Chrome extends Browser {
       this.linkedInCookiePromise(Network),
       this.cookiePromise(Network),
       this.downloadBehaviorPromise(Page),
-      this.extraHTTPHeadersPromise(Network)
-    ]).then(() => {
-      if (this.executionFinished) { return; }
-      if ((this.isLinkedIn || this.isTicketmaster) && this.options.loadAdditionalData) {
-        this.loadAdditionalData();
-      } else {
-        this.additionalBodyResolve();
-      }
-      return Page.navigate({ url: this.options.url });
-    }).catch((err) => {
-      if (this.executionFinished) { return; }
-      this.generateErrorAtStart('Error when enabling events: ' + err.message, 'Error on browser');
-    });
-
-    Promise.all([responseReceivedPromise, bodyReceivedPromise, additionalBodyPromise]).then(() => {
-      if (this.executionFinished) { return; }
-      if (this.isLinkedIn || this.isTicketmaster) {
-        this.body = this.body.replace('</body>', this.additionalBodyData + '</body>');
-      }
-      if (this.screenshotData !== null && this.options.screenshot === 'true') {
-        if ('darwin' === process.platform) { // Write screenshot to disk in Mac for testing
-          fs.writeFile('screenshot.jpg', this.screenshotData.data, 'base64', console.log);
+      this.extraHTTPHeadersPromise(Network),
+    ])
+      .then(() => {
+        if (this.executionFinished) {
+          return;
         }
-        this.body = '<screenshot>' + this.screenshotData.data + '</screenshot>' + this.body;
-      }
-      if ('true' === this.options.captureIframes) {
-        if (this.body.indexOf('<pc-iframes></pc-iframes>') > -1) {
-          this.body = this.body.replace('<pc-iframes></pc-iframes>', ''); // Don't return zero iframes
+        if ((this.isLinkedIn || this.isTicketmaster) && this.options.loadAdditionalData) {
+          this.loadAdditionalData();
         } else {
-          // Replace the empty iframes with the actual iframe content
-          const { parse } = require('node-html-parser');
-          const splitIframes = this.body.split('</pc-iframes>');
-          const root = parse(splitIframes[0].replace('<pc-iframes>', ''));
-          root.childNodes.forEach(node => {
-            // const iframeTagRegex = new RegExp(`<iframe ${node.rawAttrs}>([\w\s]|.*)</iframe>`, 'gis');
-            const iframeTag = `<iframe ${node.rawAttrs}></iframe>`;
-            splitIframes[1] = splitIframes[1].replace(iframeTag, node.toString());
-          });
-          this.body = splitIframes[1];
+          this.additionalBodyResolve();
         }
-      }
-      this.finishExecution();
-    }).catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
+        return Page.navigate({ url: this.options.url });
+      })
+      .catch((err) => {
+        if (this.executionFinished) {
+          return;
+        }
+        this.generateErrorAtStart('Error when enabling events: ' + err.message, 'Error on browser');
+      });
+
+    Promise.all([responseReceivedPromise, bodyReceivedPromise, additionalBodyPromise])
+      .then(() => {
+        if (this.executionFinished) {
+          return;
+        }
+        if (this.isLinkedIn || this.isTicketmaster) {
+          this.body = this.body.replace('</body>', this.additionalBodyData + '</body>');
+        }
+        if (this.screenshotData !== null && this.options.screenshot === 'true') {
+          if ('darwin' === process.platform) {
+            // Write screenshot to disk in Mac for testing
+            fs.writeFile('screenshot.jpg', this.screenshotData.data, 'base64', console.log);
+          }
+          this.body = '<screenshot>' + this.screenshotData.data + '</screenshot>' + this.body;
+        }
+        if ('true' === this.options.captureIframes) {
+          if (this.body.indexOf('<pc-iframes></pc-iframes>') > -1) {
+            this.body = this.body.replace('<pc-iframes></pc-iframes>', ''); // Don't return zero iframes
+          } else {
+            // Replace the empty iframes with the actual iframe content
+            const { parse } = require('node-html-parser');
+            const splitIframes = this.body.split('</pc-iframes>');
+            const root = parse(splitIframes[0].replace('<pc-iframes>', ''));
+            root.childNodes.forEach((node) => {
+              // const iframeTagRegex = new RegExp(`<iframe ${node.rawAttrs}>([\w\s]|.*)</iframe>`, 'gis');
+              const iframeTag = `<iframe ${node.rawAttrs}></iframe>`;
+              splitIframes[1] = splitIframes[1].replace(iframeTag, node.toString());
+            });
+            this.body = splitIframes[1];
+          }
+        }
+        this.finishExecution();
+      })
+      .catch((e) => log('Error while waiting all promises to complete: ' + e.message, this.caller));
 
     return mainPromise;
   }
@@ -337,24 +352,30 @@ class Chrome extends Browser {
 
   static waitForNodeToAppear(Runtime, selector, timesToCheck = 100) {
     return new Promise((resolve, reject) => {
-      Runtime.evaluate({ expression: `document.querySelector('${selector}')` }).then(async (result) => {
-        if (result.result.objectId) {
-          return resolve();
-        }
-        if (timesToCheck <= 0) {
-          return reject({ message: 'Wait tries exceeded waiting for node ' + selector + ' to appear.' });
-        }
-        await new Promise((resolve) => setTimeout(() => resolve(), 100));
-        return Chrome.waitForNodeToAppear(Runtime, selector, timesToCheck - 1);
-      }).catch((err) => reject(err));
+      Runtime.evaluate({ expression: `document.querySelector('${selector}')` })
+        .then(async (result) => {
+          if (result.result.objectId) {
+            return resolve();
+          }
+          if (timesToCheck <= 0) {
+            return reject({ message: 'Wait tries exceeded waiting for node ' + selector + ' to appear.' });
+          }
+          await new Promise((resolve) => setTimeout(() => resolve(), 100));
+          return Chrome.waitForNodeToAppear(Runtime, selector, timesToCheck - 1);
+        })
+        .catch((err) => reject(err));
     });
   }
 
   addEvents(Network, Page, Runtime, Input) {
     Network.requestIntercepted(({ interceptionId, request }) => {
-      if (this.executionFinished) { return; }
+      if (this.executionFinished) {
+        return;
+      }
       const blocked = request.url.indexOf('https://adservice.google') > -1 || this.executionFinished;
-      Network.continueInterceptedRequest({ interceptionId, errorReason: blocked ? 'Aborted' : undefined }).catch(() => { /* do nothing */ });
+      Network.continueInterceptedRequest({ interceptionId, errorReason: blocked ? 'Aborted' : undefined }).catch(() => {
+        /* do nothing */
+      });
     });
     Network.requestWillBeSent(({ requestId, type, redirectResponse }) => {
       if (type === 'Document' && this.response === null && redirectResponse && !this.executionFinished) {
@@ -370,16 +391,26 @@ class Chrome extends Browser {
     });
     Network.responseReceived(({ requestId, type, response }) => {
       const contentDispositionHeader = response && response.headers && response.headers['content-disposition'];
-      if (!this.executionFinished &&
-        (type === 'Document' && (this.response === null || this.response.status === 302 || this.response.status === 503)) ||
-        (null !== this.options && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('filename') > -1)
+      if (
+        (!this.executionFinished &&
+          type === 'Document' &&
+          (this.response === null || this.response.status === 302 || this.response.status === 503)) ||
+        (null !== this.options &&
+          'true' === this.options.enableDownloads &&
+          contentDispositionHeader &&
+          contentDispositionHeader.indexOf('filename') > -1)
       ) {
         if (!this.responseReadySent) {
           this.stats.browserResponseReady(this.appName);
           this.responseReadySent = true;
         }
         this.response = response;
-        if (!this.executionFinished && 'true' === this.options.enableDownloads && contentDispositionHeader && contentDispositionHeader.indexOf('filename') > -1) {
+        if (
+          !this.executionFinished &&
+          'true' === this.options.enableDownloads &&
+          contentDispositionHeader &&
+          contentDispositionHeader.indexOf('filename') > -1
+        ) {
           const fileAttachment = contentDispositionHeader.split(';');
           if (fileAttachment.length > 0) {
             this.fileAttachment = fileAttachment[1].trim().replace('filename="', '').replace('"', '');
@@ -398,7 +429,9 @@ class Chrome extends Browser {
       }
     });
     Page.loadEventFired(() => {
-      if (this.executionFinished) { return; }
+      if (this.executionFinished) {
+        return;
+      }
       this.loadEventFired(Runtime, Input, Network, Page);
     });
   }
@@ -411,102 +444,121 @@ class Chrome extends Browser {
           log('Javascript evaluation promise rejected: ' + scriptResult.exceptionDetails.exception.value, this.caller);
           this.response = { status: scriptResult.result.type === 'string' ? 595 : 596 }; // 595 = _reject called. 596 = usually syntax error
         }
-      } catch (e) { log('Error while evaluating passed javascript command', this.caller); }
+      } catch (e) {
+        log('Error while evaluating passed javascript command', this.caller);
+      }
     }
     this.evaluateBody(Runtime, Page);
   }
 
   evaluateJavascript(Runtime) {
-    if (this.executionFinished) { return; }
+    if (this.executionFinished) {
+      return;
+    }
     this.browser._ws._socket.setTimeout(0);
     const browserCode = `new Promise(async (_resolve, _reject) => {
       ${this.options.evaluateJavascript}
     });`;
     return Runtime.evaluate({
       expression: browserCode,
-      awaitPromise: true
+      awaitPromise: true,
     });
   }
 
   async evaluateBody(Runtime, Page) {
-    if (this.executionFinished) { return; }
+    if (this.executionFinished) {
+      return;
+    }
     if (null !== this.browser._ws._socket) {
       this.browser._ws._socket.setTimeout(0);
     }
     if (!this.executionFinished && this.options.bodyWait && this.options.bodyWait > 0) {
       await new Promise((resolve) => setTimeout(() => resolve(), this.options.bodyWait));
-      if (this.executionFinished) { return; }
+      if (this.executionFinished) {
+        return;
+      }
     }
     if (!this.executionFinished && this.options.ajaxWait === 'true') {
       while (!this.executionFinished && this.pendingAjaxCalls.length > 0) {
         await new Promise((resolve) => setTimeout(() => resolve(), 500));
       }
-      if (this.executionFinished) { return; }
+      if (this.executionFinished) {
+        return;
+      }
     }
     if (!this.executionFinished && this.options.screenshot === 'true' && Page) {
       this.screenshotData = await this.takeScreenshot(Page, this.browser.Emulation, this.browser.DOM);
-      if (this.executionFinished) { return; }
+      if (this.executionFinished) {
+        return;
+      }
     }
     if (null !== this.fileAttachment && fs.existsSync(downloadPath + '/' + this.fileAttachment)) {
       this.body = fs.readFileSync(downloadPath + '/' + this.fileAttachment);
       this.stats.browserBodyReady(this.appName);
       try {
         fs.unlinkSync(downloadPath + '/' + this.fileAttachment);
-      } catch (e) { /* do nothing */ }
+      } catch (e) {
+        /* do nothing */
+      }
       return this.bodyReceivedResolve();
     }
-    const captureExpression = 'true' === this.options.captureIframes ?
-      '`<pc-iframes>${[...document.querySelectorAll(\'iframe\')].map(e => { e.innerHTML = \'\'; return e.outerHTML.replace(\'</iframe>\', e.contentWindow.document.documentElement.outerHTML + \'<\\iframe>\'); }).join(\'\')}</pc-iframes>${document.documentElement.outerHTML}`' :
-      'document.documentElement.outerHTML';
-    Runtime.evaluate({ expression: captureExpression }).then((result) => {
-      if ((this.body !== null && this.body !== '') || this.executionFinished) {
-        return;
-      }
-      this.body = result.result.value;
-      this.stats.browserBodyReady(this.appName);
-      if (this.isLinkedIn) {
-        this.linkedInResponseCode();
-      }
-      this.bodyReceivedResolve();
-    }).catch((e) => {
-      if (this.body === null) {
-        this.body = 'Error';
+    const captureExpression =
+      'true' === this.options.captureIframes
+        ? "`<pc-iframes>${[...document.querySelectorAll('iframe')].map(e => { e.innerHTML = ''; return e.outerHTML.replace('</iframe>', e.contentWindow.document.documentElement.outerHTML + '<\\iframe>'); }).join('')}</pc-iframes>${document.documentElement.outerHTML}`"
+        : 'document.documentElement.outerHTML';
+    Runtime.evaluate({ expression: captureExpression })
+      .then((result) => {
+        if ((this.body !== null && this.body !== '') || this.executionFinished) {
+          return;
+        }
+        this.body = result.result.value;
         this.stats.browserBodyReady(this.appName);
+        if (this.isLinkedIn) {
+          this.linkedInResponseCode();
+        }
         this.bodyReceivedResolve();
-      }
-      log('Error while evaluating outerHTML: ' + e.message, this.caller);
-    });
+      })
+      .catch((e) => {
+        if (this.body === null) {
+          this.body = 'Error';
+          this.stats.browserBodyReady(this.appName);
+          this.bodyReceivedResolve();
+        }
+        log('Error while evaluating outerHTML: ' + e.message, this.caller);
+      });
 
     // This is in case Network couldn't detect the redirect for blocked Google
-    Runtime.evaluate({ expression: 'document.location.href' }).then((result) => {
-      if (this.response !== null || this.executionFinished) {
-        return;
-      }
-      let locationUrl = result.result.value;
-      if (locationUrl.indexOf('https://ipv6.google.com/sorry') > -1) {
-        this.response = { status: 503 };
-      } else if (locationUrl === 'chrome-error://chromewebdata/') {
-        log('Error 999 when checking url: ' + this.options.url + ' chrome-error://chromewebdata/', this.caller);
-        this.response = { status: 999 };
-      }
-      if (this.response !== null && this.responseReceivedResolve !== null) {
-        if (!this.responseReadySent) {
-          this.stats.browserResponseReady(this.appName);
-          this.responseReadySent = true;
+    Runtime.evaluate({ expression: 'document.location.href' })
+      .then((result) => {
+        if (this.response !== null || this.executionFinished) {
+          return;
         }
-        this.responseReceivedResolve();
-      }
-    }).catch((e) => {
-      if (!this.executionFinished && this.response === null) {
-        this.response = { status: 999 };
-        if (!this.responseReadySent) {
-          this.stats.browserResponseReady(this.appName);
-          this.responseReadySent = true;
+        let locationUrl = result.result.value;
+        if (locationUrl.indexOf('https://ipv6.google.com/sorry') > -1) {
+          this.response = { status: 503 };
+        } else if (locationUrl === 'chrome-error://chromewebdata/') {
+          log('Error 999 when checking url: ' + this.options.url + ' chrome-error://chromewebdata/', this.caller);
+          this.response = { status: 999 };
         }
-        this.responseReceivedResolve();
-      }
-      log('Error while evaluating document.location.href: ' + e.message, this.caller);
-    });
+        if (this.response !== null && this.responseReceivedResolve !== null) {
+          if (!this.responseReadySent) {
+            this.stats.browserResponseReady(this.appName);
+            this.responseReadySent = true;
+          }
+          this.responseReceivedResolve();
+        }
+      })
+      .catch((e) => {
+        if (!this.executionFinished && this.response === null) {
+          this.response = { status: 999 };
+          if (!this.responseReadySent) {
+            this.stats.browserResponseReady(this.appName);
+            this.responseReadySent = true;
+          }
+          this.responseReceivedResolve();
+        }
+        log('Error while evaluating document.location.href: ' + e.message, this.caller);
+      });
   }
 
   linkedInCookiePromise() {
@@ -530,7 +582,7 @@ class Chrome extends Browser {
       cookiesArray.push({
         url: this.options.url,
         name: cookieName,
-        value: cookieData.join('=')
+        value: cookieData.join('='),
       });
     }
     return Network.setCookies({ cookies: cookiesArray });
@@ -570,7 +622,9 @@ class Chrome extends Browser {
       this.options.additionalHeaders.split('|').map((header) => {
         const colonPosition = header.indexOf(':');
         if (colonPosition > -1) {
-          headers[header.substring(0, colonPosition).trim()] = header.substring(colonPosition + 1, header.length).trim();
+          headers[header.substring(0, colonPosition).trim()] = header
+            .substring(colonPosition + 1, header.length)
+            .trim();
         }
       });
       return Network.setExtraHTTPHeaders({ headers });
@@ -580,12 +634,16 @@ class Chrome extends Browser {
   }
 
   async takeScreenshot(Page, Emulation, DOM) {
-    const { root: { nodeId: documentNodeId } } = await DOM.getDocument();
+    const {
+      root: { nodeId: documentNodeId },
+    } = await DOM.getDocument();
     const { nodeId: bodyNodeId } = await DOM.querySelector({
       selector: 'body',
       nodeId: documentNodeId,
     });
-    const { model: { height } } = await DOM.getBoxModel({ nodeId: bodyNodeId });
+    const {
+      model: { height },
+    } = await DOM.getBoxModel({ nodeId: bodyNodeId });
     const deviceMetrics = {
       width: this.windowSize.width,
       height: height,
@@ -593,18 +651,24 @@ class Chrome extends Browser {
       mobile: false,
       fitWindow: false,
     };
-    if (this.executionFinished) { return; }
+    if (this.executionFinished) {
+      return;
+    }
     await Emulation.setDeviceMetricsOverride(deviceMetrics);
     await Emulation.setVisibleSize({ width: this.windowSize.width, height: height });
-    if (this.executionFinished) { return; }
+    if (this.executionFinished) {
+      return;
+    }
     return await Page.captureScreenshot({
       format: 'jpeg',
-      quality: 80
+      quality: 80,
     });
   }
 
   proxyTimeoutError(type) {
-    if (this.executionFinished) { return; }
+    if (this.executionFinished) {
+      return;
+    }
     if (this.response === null && !this.responseReadySent) {
       this.stats.browserResponseReady(this.appName);
       this.responseReadySent = true;
@@ -621,12 +685,20 @@ class Chrome extends Browser {
   closeBrowser() {
     if (this.browser !== null) {
       try {
-        this.browser.Page.stopLoading().catch(() => { /* do nothing */ });
-        this.browser.Network.disable().catch(() => { /* do nothing */ });
-        this.browser.Page.disable().catch(() => { /* do nothing */ });
+        this.browser.Page.stopLoading().catch(() => {
+          /* do nothing */
+        });
+        this.browser.Network.disable().catch(() => {
+          /* do nothing */
+        });
+        this.browser.Page.disable().catch(() => {
+          /* do nothing */
+        });
         if (!this.isLambda) {
           try {
-            this.browser.Network.setRequestInterceptionEnabled({ enabled: false }).catch(() => { /* do nothing */ });
+            this.browser.Network.setRequestInterceptionEnabled({ enabled: false }).catch(() => {
+              /* do nothing */
+            });
           } catch (e) {
             // this.browser.Network.setRequestInterception([]).catch(() => { /* do nothing */ });
           }
@@ -646,10 +718,11 @@ class Chrome extends Browser {
     if (this.pid !== null) {
       try {
         process.kill(-this.pid);
-      } catch (e) { /* do nothing */ }
+      } catch (e) {
+        /* do nothing */
+      }
     }
   }
-
 }
 
 module.exports = { Chrome, log };

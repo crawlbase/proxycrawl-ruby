@@ -4,7 +4,6 @@ const linkedInInitialUrl = 'https://www.linkedin.com/#oidjuqw';
 const linkedInMethod = 2;
 
 class FirefoxLinkedIn extends Firefox {
-
   constructor(options) {
     super(options);
     this.isLinkedIn = true;
@@ -40,7 +39,9 @@ class FirefoxLinkedIn extends Firefox {
       try {
         await this.driver.findElement(By.id('join-form'));
         this.response.status = 504;
-      } catch (e) { /* do nothing */ }
+      } catch (e) {
+        /* do nothing */
+      }
     }
     return true;
   }
@@ -60,52 +61,73 @@ class FirefoxLinkedIn extends Firefox {
         view: window
       });
       link.dispatchEvent(event);`;
-    this.driver.executeScript(js).then(() => {
-      this.options.url = this.realUrl;
-      return new Promise((resolve) => resolve());
-    }).then(async () => {
-      return await this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
-    }).then(() => {
-      return setTimeout(() => this.evaluateBody(), 5000);
-    }).catch((err) => {
-      if (this.executionFinished) { return; }
-      log('Error visiting linkedin from Google: ' + err.message, this.caller);
-      this.body = 'Error on browser';
-      this.stats.browserBodyResponseReady(this.appName);
-      this.response = { status: 999 };
-      this.finishExecution();
-    });
+    this.driver
+      .executeScript(js)
+      .then(() => {
+        this.options.url = this.realUrl;
+        return new Promise((resolve) => resolve());
+      })
+      .then(async () => {
+        return await this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
+      })
+      .then(() => {
+        return setTimeout(() => this.evaluateBody(), 5000);
+      })
+      .catch((err) => {
+        if (this.executionFinished) {
+          return;
+        }
+        log('Error visiting linkedin from Google: ' + err.message, this.caller);
+        this.body = 'Error on browser';
+        this.stats.browserBodyResponseReady(this.appName);
+        this.response = { status: 999 };
+        this.finishExecution();
+      });
   }
 
   linkedInLoadEventFiredMethod2() {
     if (this.options.url !== linkedInInitialUrl) {
       return;
     }
-    this.driver.manage().addCookie({
-      name: 'join_wall',
-      value: this.options.linkedInJoinWall
-    }).then(() => {
-      this.options.url = this.realUrl;
-      return new Promise((resolve) => setTimeout(() => resolve(), 5000));
-    }).then(() => {
-      if (this.executionFinished) { return; }
-      return this.driver.get(this.options.url);
-    }).then(() => {
-      if (this.executionFinished) { return; }
-      return this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
-    }).then(() => {
-      if (this.executionFinished) { return; }
-      return setTimeout(() => this.evaluateBody(), 5000);
-    }).catch((err) => {
-      if (this.executionFinished) { return; }
-      log('Error when loading linkedin page: ' + err.message, this.caller);
-      this.body = 'Error on browser';
-      this.stats.browserBodyResponseReady(this.appName);
-      this.response = { status: 999 };
-      this.finishExecution();
-    });
+    this.driver
+      .manage()
+      .addCookie({
+        name: 'join_wall',
+        value: this.options.linkedInJoinWall,
+      })
+      .then(() => {
+        this.options.url = this.realUrl;
+        return new Promise((resolve) => setTimeout(() => resolve(), 5000));
+      })
+      .then(() => {
+        if (this.executionFinished) {
+          return;
+        }
+        return this.driver.get(this.options.url);
+      })
+      .then(() => {
+        if (this.executionFinished) {
+          return;
+        }
+        return this.driver.wait(until.elementLocated(By.id('application-body')), 10000);
+      })
+      .then(() => {
+        if (this.executionFinished) {
+          return;
+        }
+        return setTimeout(() => this.evaluateBody(), 5000);
+      })
+      .catch((err) => {
+        if (this.executionFinished) {
+          return;
+        }
+        log('Error when loading linkedin page: ' + err.message, this.caller);
+        this.body = 'Error on browser';
+        this.stats.browserBodyResponseReady(this.appName);
+        this.response = { status: 999 };
+        this.finishExecution();
+      });
   }
-
 }
 
 module.exports = { FirefoxLinkedIn };

@@ -11,5 +11,5 @@ module.exports = {
   Firefox,
   FirefoxLinkedIn,
   chromeStats,
-  firefoxStats
+  firefoxStats,
 };
