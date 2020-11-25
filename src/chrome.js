@@ -125,15 +125,15 @@ const chromeCommonFlags = [
 ];
 var onloadScript = '';
 
-function log(text, caller = '', logLoki = true) {
+function log(text, caller = '', logLogger = true) {
   let message;
   if (null === caller || '' === caller) {
     message = 'CR: ' + text;
   } else {
     message = 'CR [' + caller + ']: ' + text;
   }
-  if (undefined !== global.Loki && logLoki) {
-    global.Loki.log('Error ' + message);
+  if (undefined !== global.logger && true === logLogger) {
+    return global.logger.warn(message);
   }
   return console.log(message);
 }
