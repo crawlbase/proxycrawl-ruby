@@ -491,12 +491,15 @@ class Chrome extends Browser {
         this.screenshotData = await this.takeScreenshot(Page, this.browser.Emulation, this.browser.DOM);
       } catch (e) {
         if (global.logger) {
-          logger.warn(`Failed to take screenshot for page ${this.options.url} => ${e.message}`);
-          this.body = 'Error';
-          this.stats.browserBodyReady(this.appName);
-          this.bodyReceivedResolve();
-          return;
+          const url = (this.options && this.options.url) || 'unknown';
+          logger.warn(`Failed to take screenshot for page ${url} => ${e.message}`);
+        } else {
+          console.error(`Failed to take screenshot ${e.message}`);
         }
+        this.body = 'Error';
+        this.stats.browserBodyReady(this.appName);
+        this.bodyReceivedResolve();
+        return;
       }
       if (this.executionFinished) {
         return;
