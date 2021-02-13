@@ -253,6 +253,11 @@ class Chrome extends Browser {
         this.openSocketTimeout = setTimeout(() => this.proxyTimeoutError('on connect'), proxyOpenTimeout);
         this.browser._ws._socket.on('connect', () => clearTimeout(this.openSocketTimeout));
       }
+      // If options has been already deallocated means the process has finished already so we stop.
+      if (null === this.options) {
+        this.generateErrorAtStart('Options has been already deallocated');
+        return mainPromise;
+      }
       const domain = new URL(this.options.url).hostname;
       // Some domains require longer socket timeouts as they take longer to stablish the connection for some reason
       const finalProxyFailTimeout =
