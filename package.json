@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
-    "postinstall": "if [ -z \"$NODE_ENV\" ]; then husky install; fi"
+    "postinstall": "node .postinstall.js"
   },
   "repository": {
     "type": "git",
