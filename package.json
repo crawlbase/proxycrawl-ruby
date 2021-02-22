@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "node test.js",
+    "postinstall": "if [ -z \"$NODE_ENV\" ]; then husky install; fi"
   },
   "repository": {
     "type": "git",
@@ -13,26 +14,21 @@
   "author": "Devandgo",
   "license": "ISC",
   "dependencies": {
-    "chrome-remote-interface": "^0.28.2",
-    "geckodriver": "^1.21.0",
-    "node-html-parser": "^2.0.0",
+    "chrome-remote-interface": "^0.29.0",
+    "geckodriver": "^1.22.1",
+    "node-html-parser": "^2.2.0",
     "rimraf": "^3.0.2",
     "selenium-webdriver": "^3.6.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
-    "eslint": "^7.14.0",
-    "eslint-config-prettier": "^6.15.0",
-    "husky": "^4.3.0",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^8.0.0",
+    "husky": "^5.1.0",
     "prettier": "^2.2.1"
   },
   "publishConfig": {
     "registry": "https://npm.devandgo.com"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
   }
 }
