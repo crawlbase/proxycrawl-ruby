@@ -186,8 +186,10 @@ class Chrome extends Browser {
 
     this.stats.browserNewRequest(this.appName);
     this.forceKillTimeout = setTimeout(() => this.forceKillTimeoutFunction(), this.killTimeout);
-
-    this.windowSize = { width: getRandomInt(1280, 2300), height: getRandomInt(800, 2000) };
+    this.windowSize = {
+      width: 'mobile' === this.options.device ? getRandomInt(300, 500) : getRandomInt(1280, 2300),
+      height: 'mobile' === this.options.device ? getRandomInt(500, 800) : getRandomInt(800, 2000),
+    };
     const chromeFlags = [
       '--remote-debugging-port=' + this.debuggerPort,
       '--user-data-dir=' + this.sessionDir,
@@ -676,7 +678,7 @@ class Chrome extends Browser {
       width: this.windowSize.width,
       height: height,
       deviceScaleFactor: 1,
-      mobile: false,
+      mobile: 'mobile' === this.options.device,
       fitWindow: false,
     };
     if (this.executionFinished) {
