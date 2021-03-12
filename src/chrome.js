@@ -271,8 +271,11 @@ class Chrome extends Browser {
 
     this.addEvents(Network, Page, Runtime, Input);
 
-    // Remove all blocked urls if we take a screenshot of amazon page
-    if ('true' === this.options.screenshot && this.options.url.indexOf('amazon.') > -1) {
+    // Remove all blocked urls if we take a screenshot of amazon page or if unblockUrls is true
+    if (
+      'true' === this.options.unblockUrls ||
+      ('true' === this.options.screenshot && this.options.url.indexOf('amazon.') > -1)
+    ) {
       blockedUrls.splice(0, blockedUrls.length);
     }
 
