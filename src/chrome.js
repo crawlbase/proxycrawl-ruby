@@ -57,7 +57,7 @@ const blockedUrls = [
   'https://*.ts',
   'https://c.amazon-adsystem.com/bao-csm/forensics/*',
   'https://unagi-na.amazon.com/1/events/*',
-  'https://images-na.ssl-images-amazon.com/images/*.js*',
+  // 'https://images-na.ssl-images-amazon.com/images/*.js*', // Cannot block, breaks ajax
   'https://unagi.amazon.com/1/events/*',
   'https://m.media-amazon.com/images/*.woff2',
   'https://m.media-amazon.com/images/*.woff',
