@@ -1,4 +1,4 @@
-// This is the package.json postinstall script.
+// This is the package.json prepare script.
 // It disables the execution on CI and also when is installed as dependency.
 const { exec } = require('child_process');
 
@@ -10,7 +10,7 @@ if (undefined === process.env.NODE_ENV) {
         console.log('Skipping husky in the dependency.');
         return process.exit(0);
       }
-      console.error(`postinstall exec error: ${error}`);
+      console.error(`prepare exec error: ${error}`);
       return process.exit(1);
     }
     console.log(stdout);
