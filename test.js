@@ -71,7 +71,7 @@ function launchChrome() {
     if (result.response.status !== 200) {
       console.error('Invalid response: ', result.response.status);
       if (result.response.status === 301) {
-        console.log('Status 301', result.response.headers.location);
+        console.log('Status 301', result.response.headers.location || result.response.headers.Location);
       }
     }
   });
