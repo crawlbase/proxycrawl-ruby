@@ -395,11 +395,17 @@ class Chrome extends Browser {
         /* do nothing */
       });
     });
-    Network.requestWillBeSent(({ requestId, type, redirectResponse }) => {
+    Network.requestWillBeSent(({ request, requestId, type, redirectResponse }) => {
       if (type === 'Document' && this.response === null && redirectResponse && !this.executionFinished) {
         if (!this.responseReadySent) {
           this.stats.browserResponseReady(this.appName);
           this.responseReadySent = true;
+        }
+        // The following two conditions are to solve the following bug: https://github.com/cyrus-and/chrome-remote-interface/issues/452
+        if (undefined !== redirectResponse.headers.location && undefined !== request.url) {
+          redirectResponse.headers.location = request.url;
+        } else if (undefined !== redirectResponse.headers.Location && undefined !== request.url) {
+          redirectResponse.headers.Location = request.url;
         }
         this.response = redirectResponse;
         this.responseReceivedResolve();
