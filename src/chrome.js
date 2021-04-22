@@ -462,6 +462,12 @@ class Chrome extends Browser {
 
   async loadEventFired(Runtime, Input, Network, Page) {
     if (this.options.evaluateJavascript) {
+      if (this.options.javascriptWait && this.options.javascriptWait > 0) {
+        await new Promise((resolve) => setTimeout(() => resolve(), this.options.javascriptWait));
+        if (this.executionFinished) {
+          return;
+        }
+      }
       try {
         const scriptResult = await this.evaluateJavascript(Runtime);
         if (!this.executionFinished && scriptResult.exceptionDetails) {

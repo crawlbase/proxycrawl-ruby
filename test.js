@@ -36,6 +36,7 @@ const chromeParams = {
 // }
 //     `,
   // bodyWait: 1000,
+  // javascriptWait: 10000,
   // device: 'mobile',
   // ajaxWait: 'true',
   // proxy: 'proxy.proxycrawl.com:9000',
