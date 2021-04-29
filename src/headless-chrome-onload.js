@@ -16,9 +16,10 @@ Object.defineProperty(navigator, 'doNotTrack', {
   get: () => '1',
 });
 
-const newProto = navigator.__proto__;
-delete newProto.webdriver;
-navigator.__proto__ = newProto;
+// Removed temporarily as it breaks some sites
+// const newProto = navigator.__proto__;
+// delete newProto.webdriver;
+// navigator.__proto__ = newProto;
 
 Notification = {
   permission: 'default',
@@ -26,9 +27,10 @@ Notification = {
   requestPermission: function () {},
 };
 
-const originalQuery = window.navigator.permissions.query;
-window.navigator.permissions.__proto__.query = (parameters) =>
-  parameters.name === 'notifications' ? Promise.resolve({ state: Notification.permission }) : originalQuery(parameters);
+// Removed temporarily as it breaks some sites
+// const originalQuery = window.navigator.permissions.query;
+// window.navigator.permissions.__proto__.query = (parameters) =>
+//   parameters.name === 'notifications' ? Promise.resolve({ state: Notification.permission }) : originalQuery(parameters);
 
 const oldCall = Function.prototype.call;
 function call() {
