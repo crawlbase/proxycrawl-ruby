@@ -70,15 +70,19 @@ module ProxyCrawl
 
     def prepare_response(response, format)
       if format == 'json' || base_url.include?('/scraper')
+        json_body = JSON.parse(response.body)
+        @original_status = json_body['original_status'].to_i
+        @pc_status = json_body['pc_status'].to_i
+        @url = json_body['url']
         @status_code = response.code.to_i
-        @body = response.body
       else
         @original_status = response['original_status'].to_i
         @status_code = response.code.to_i
         @pc_status = response['pc_status'].to_i
         @url = response['url']
-        @body = response.body
       end
+
+      @body = response.body
     end
   end
 end

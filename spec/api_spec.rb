@@ -2,11 +2,11 @@ require 'spec_helper.rb'
 require 'proxycrawl'
 
 describe ProxyCrawl::API do
-  it "raises an error if token is missing" do
+  it 'raises an error if token is missing' do
     expect { ProxyCrawl::API.new }.to raise_error(RuntimeError, 'Token is required')
   end
 
-  it "sets/reads token" do
+  it 'sets/reads token' do
     expect(ProxyCrawl::API.new(token: 'test').token).to eql('test')
   end
 
@@ -20,7 +20,7 @@ describe ProxyCrawl::API do
 
       api = ProxyCrawl::API.new(token: 'test')
 
-      response = api.get("http://httpbin.org/anything?param1=x&params2=y")
+      response = api.get('http://httpbin.org/anything?param1=x&params2=y')
 
       expect(response.status_code).to eql(200)
       expect(response.original_status).to eql(200)

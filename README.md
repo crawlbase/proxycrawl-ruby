@@ -174,6 +174,57 @@ end
 
 If you have questions or need help using the library, please open an issue or [contact us](https://proxycrawl.com/contact).
 
+
+## Screenshots API usage
+
+Initialize with your Screenshots API token and call the `get` method.
+
+```ruby
+screenshots_api = ProxyCrawl::ScreenshotsAPI.new(token: 'YOUR_TOKEN')
+
+begin
+  response = screenshots_api.get('https://www.apple.com')
+  puts response.status_code
+  puts response.screenshot_path # do something with screenshot_path here
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+or with using a block
+
+```ruby
+screenshots_api = ProxyCrawl::ScreenshotsAPI.new(token: 'YOUR_TOKEN')
+
+begin
+  response = screenshots_api.get('https://www.apple.com') do |file|
+    # do something (reading/writing) with the image file here
+  end
+  puts response.status_code
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+or specifying a file path
+
+```ruby
+screenshots_api = ProxyCrawl::ScreenshotsAPI.new(token: 'YOUR_TOKEN')
+
+begin
+  response = screenshots_api.get('https://www.apple.com', save_to_path: '~/screenshot.jpg') do |file|
+    # do something (reading/writing) with the image file here
+  end
+  puts response.status_code
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+Note that `screenshots_api.get(url, options)` method accepts an [options](https://proxycrawl.com/docs/screenshots-api/parameters)
+
+If you have questions or need help using the library, please open an issue or [contact us](https://proxycrawl.com/contact).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
