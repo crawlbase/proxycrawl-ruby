@@ -149,6 +149,7 @@ Example:
 ```ruby
 begin
   response = scraper_api.get('https://www.amazon.com/Halo-SleepSack-Swaddle-Triangle-Neutral/dp/B01LAG1TOS')
+  puts response.remaining_requests
   puts response.status_code
   puts response.body
 rescue => exception
@@ -160,11 +161,15 @@ end
 
 Initialize with your Leads API token and call the `get` method.
 
+For more details on the implementation, please visit the [Leads API documentation](https://proxycrawl.com/docs/leads-api).
+
 ```ruby
 leads_api = ProxyCrawl::LeadsAPI.new(token: 'YOUR_TOKEN')
 
 begin
   response = leads_api.get('stripe.com')
+  puts response.success
+  puts response.remaining_requests
   puts response.status_code
   puts response.body
 rescue => exception
@@ -184,6 +189,8 @@ screenshots_api = ProxyCrawl::ScreenshotsAPI.new(token: 'YOUR_TOKEN')
 
 begin
   response = screenshots_api.get('https://www.apple.com')
+  puts response.success
+  puts response.remaining_requests
   puts response.status_code
   puts response.screenshot_path # do something with screenshot_path here
 rescue => exception
@@ -200,6 +207,8 @@ begin
   response = screenshots_api.get('https://www.apple.com') do |file|
     # do something (reading/writing) with the image file here
   end
+  puts response.success
+  puts response.remaining_requests
   puts response.status_code
 rescue => exception
   puts exception.backtrace
@@ -215,6 +224,8 @@ begin
   response = screenshots_api.get('https://www.apple.com', save_to_path: '~/screenshot.jpg') do |file|
     # do something (reading/writing) with the image file here
   end
+  puts response.success
+  puts response.remaining_requests
   puts response.status_code
 rescue => exception
   puts exception.backtrace
@@ -222,6 +233,111 @@ end
 ```
 
 Note that `screenshots_api.get(url, options)` method accepts an [options](https://proxycrawl.com/docs/screenshots-api/parameters)
+
+## Storage API usage
+
+Initialize the Storage API using your private token.
+
+```ruby
+storage_api = ProxyCrawl::StorageAPI.new(token: 'YOUR_TOKEN')
+```
+
+Pass the [url](https://proxycrawl.com/docs/storage-api/parameters/#url) that you want to get from [Proxycrawl Storage](https://proxycrawl.com/dashboard/storage).
+
+```ruby
+begin
+  response = storage_api.get('https://www.apple.com')
+  puts response.original_status
+  puts response.pc_status
+  puts response.url
+  puts response.status_code
+  puts response.rid
+  puts response.body
+  puts response.stored_at
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+or you can use the [RID](https://proxycrawl.com/docs/storage-api/parameters/#rid)
+
+```ruby
+begin
+  response = storage_api.get(RID)
+  puts response.original_status
+  puts response.pc_status
+  puts response.url
+  puts response.status_code
+  puts response.rid
+  puts response.body
+  puts response.stored_at
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+Note: One of the two RID or URL must be sent. So both are optional but it's mandatory to send one of the two.
+
+### [Delete](https://proxycrawl.com/docs/storage-api/delete/) request
+
+To delete a storage item from your storage area, use the correct RID
+
+```ruby
+if storage_api.delete(RID)
+  puts 'delete success'
+else
+  puts "Unable to delete: #{storage_api.body['error']}"
+end
+```
+
+### [Bulk](https://proxycrawl.com/docs/storage-api/bulk/) request
+
+To do a bulk request with a list of RIDs, please send the list of rids as an array
+
+```ruby
+begin
+  response = storage_api.bulk([RID1, RID2, RID3, ...])
+  puts response.original_status
+  puts response.pc_status
+  puts response.url
+  puts response.status_code
+  puts response.rid
+  puts response.body
+  puts response.stored_at
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+### [RIDs](https://proxycrawl.com/docs/storage-api/rids) request
+
+To request a bulk list of RIDs from your storage area
+
+```ruby
+begin
+  response = storage_api.rids
+  puts response.status_code
+  puts response.rid
+  puts response.body
+rescue => exception
+  puts exception.backtrace
+end
+```
+
+You can also specify a limit as a parameter
+
+```ruby
+storage_api.rids(100)
+```
+
+### [Total Count](https://proxycrawl.com/docs/storage-api/total_count)
+
+To get the total number of documents in your storage area
+
+```ruby
+total_count = storage_api.total_count
+puts "total_count: #{total_count}"
+```
 
 If you have questions or need help using the library, please open an issue or [contact us](https://proxycrawl.com/contact).
 

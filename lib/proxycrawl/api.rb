@@ -6,7 +6,7 @@ require 'uri'
 
 module ProxyCrawl
   class API
-    attr_reader :token, :body, :status_code, :original_status, :pc_status, :url
+    attr_reader :token, :body, :status_code, :original_status, :pc_status, :url, :storage_url
 
     INVALID_TOKEN = 'Token is required'
     INVALID_URL = 'URL is required'
@@ -69,19 +69,13 @@ module ProxyCrawl
     end
 
     def prepare_response(response, format)
-      if format == 'json' || base_url.include?('/scraper')
-        json_body = JSON.parse(response.body)
-        @original_status = json_body['original_status'].to_i
-        @pc_status = json_body['pc_status'].to_i
-        @url = json_body['url']
-        @status_code = response.code.to_i
-      else
-        @original_status = response['original_status'].to_i
-        @status_code = response.code.to_i
-        @pc_status = response['pc_status'].to_i
-        @url = response['url']
-      end
+      res = format == 'json' || base_url.include?('/scraper') ? JSON.parse(response.body) : response
 
+      @original_status = res['original_status'].to_i
+      @pc_status = res['pc_status'].to_i
+      @url = res['url']
+      @storage_url = res['storage_url']
+      @status_code = response.code.to_i
       @body = response.body
     end
   end
