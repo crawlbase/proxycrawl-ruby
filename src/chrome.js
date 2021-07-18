@@ -215,7 +215,7 @@ class Chrome extends Browser {
         chromeFlags.push('--blink-settings=imagesEnabled=false');
       }
     }
-    if (this.options.proxy) {
+    if (this.options.proxy && this.options.proxy.indexOf('noproxy') !== 0) {
       chromeFlags.push('--proxy-server=http://' + this.options.proxy);
     }
 
