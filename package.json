@@ -14,19 +14,19 @@
   "author": "Devandgo",
   "license": "ISC",
   "dependencies": {
-    "chrome-remote-interface": "^0.31.0",
-    "geckodriver": "^2.0.1",
-    "node-html-parser": "^4.0.0",
+    "chrome-remote-interface": "^0.31.1",
+    "geckodriver": "^2.0.4",
+    "node-html-parser": "^5.1.0",
     "rimraf": "^3.0.2",
-    "selenium-webdriver": "^3.6.0"
+    "selenium-webdriver": "^4.1.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.1.4",
-    "@commitlint/config-conventional": "^12.1.4",
-    "eslint": "^7.30.0",
+    "@commitlint/cli": "^15.0.0",
+    "@commitlint/config-conventional": "^15.0.0",
+    "eslint": "^8.3.0",
     "eslint-config-prettier": "^8.3.0",
-    "husky": "^7.0.1",
-    "prettier": "^2.3.2"
+    "husky": "^7.0.4",
+    "prettier": "^2.4.1"
   },
   "publishConfig": {
     "registry": "https://npm.devandgo.com"
