@@ -6,7 +6,7 @@ require 'uri'
 
 module ProxyCrawl
   class LeadsAPI
-    attr_reader :token, :body, :status_code, :success, :remaining_requests
+    attr_reader :token, :timeout, :body, :status_code, :success, :remaining_requests
 
     INVALID_TOKEN = 'Token is required'
     INVALID_DOMAIN = 'Domain is required'
@@ -15,6 +15,7 @@ module ProxyCrawl
       raise INVALID_TOKEN if options[:token].nil? || options[:token].empty?
 
       @token = options[:token]
+      @timeout = options[:timeout] || 120
     end
 
     def get(domain)
@@ -23,7 +24,15 @@ module ProxyCrawl
       uri = URI('https://api.proxycrawl.com/leads')
       uri.query = URI.encode_www_form({ token: token, domain: domain })
 
-      response = Net::HTTP.get_response(uri)
+      req = Net::HTTP::Get.new(uri)
+
+      req_options = {
+        read_timeout: timeout,
+        use_ssl: uri.scheme == 'https',
+        verify_mode: OpenSSL::SSL::VERIFY_NONE
+      }
+
+      response = Net::HTTP.start(uri.hostname, uri.port, req_options) { |http| http.request(req) }
       @status_code = response.code.to_i
       @body = response.body
 

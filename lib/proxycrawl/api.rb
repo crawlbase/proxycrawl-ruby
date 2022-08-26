@@ -6,7 +6,7 @@ require 'uri'
 
 module ProxyCrawl
   class API
-    attr_reader :token, :body, :status_code, :original_status, :pc_status, :url, :storage_url
+    attr_reader :token, :body, :timeout, :status_code, :original_status, :pc_status, :url, :storage_url
 
     INVALID_TOKEN = 'Token is required'
     INVALID_URL = 'URL is required'
@@ -15,14 +15,22 @@ module ProxyCrawl
       raise INVALID_TOKEN if options[:token].nil?
 
       @token = options[:token]
+      @timeout = options[:timeout] || 120
     end
 
     def get(url, options = {})
       raise INVALID_URL if url.empty?
 
       uri = prepare_uri(url, options)
+      req = Net::HTTP::Get.new(uri)
 
-      response = Net::HTTP.get_response(uri)
+      req_options = {
+        read_timeout: timeout,
+        use_ssl: uri.scheme == 'https',
+        verify_mode: OpenSSL::SSL::VERIFY_NONE
+      }
+
+      response = Net::HTTP.start(uri.hostname, uri.port, req_options) { |http| http.request(req) }
 
       prepare_response(response, options[:format])
 

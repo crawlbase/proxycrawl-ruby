@@ -6,7 +6,7 @@ require 'uri'
 
 module ProxyCrawl
   class StorageAPI
-    attr_reader :token, :original_status, :pc_status, :url, :status_code, :rid, :body, :stored_at
+    attr_reader :token, :timeout, :original_status, :pc_status, :url, :status_code, :rid, :body, :stored_at
 
     INVALID_TOKEN = 'Token is required'
     INVALID_RID = 'RID is required'
@@ -18,6 +18,7 @@ module ProxyCrawl
       raise INVALID_TOKEN if options[:token].nil? || options[:token].empty?
 
       @token = options[:token]
+      @timeout = options[:timeout] || 120
     end
 
     def get(url_or_rid, format = 'html')
@@ -25,7 +26,16 @@ module ProxyCrawl
 
       uri = URI(BASE_URL)
       uri.query = URI.encode_www_form({ token: token, format: format }.merge(decide_url_or_rid(url_or_rid)))
-      response = Net::HTTP.get_response(uri)
+
+      req = Net::HTTP::Get.new(uri)
+
+      req_options = {
+        read_timeout: timeout,
+        use_ssl: uri.scheme == 'https',
+        verify_mode: OpenSSL::SSL::VERIFY_NONE
+      }
+
+      response = Net::HTTP.start(uri.hostname, uri.port, req_options) { |http| http.request(req) }
 
       res = format == 'json' ? JSON.parse(response.body) : response
 
