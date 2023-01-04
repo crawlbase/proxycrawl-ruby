@@ -361,4 +361,4 @@ Everyone interacting in the Proxycrawl project’s codebases, issue trackers, ch
 
 ---
 
-Copyright 2022 ProxyCrawl
+Copyright 2023 ProxyCrawl
