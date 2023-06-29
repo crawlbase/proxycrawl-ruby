@@ -28,4 +28,16 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "webmock", "~> 3.4"
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 12.3.3"
+
+  # Deprecation warning
+  spec.post_install_message = <<~MESSAGE
+    ================================================================================
+    DEPRECATION WARNING - 'proxycrawl' gem
+    ================================================================================
+
+    'proxycrawl' is deprecated due to rebranding. Please switch to the 'crawlbase' gem.
+
+    More details and migration guide: https://github.com/crawlbase-source/crawlbase-ruby
+    ================================================================================
+  MESSAGE
 end

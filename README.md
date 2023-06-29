@@ -1,3 +1,9 @@
+# DEPRECATION NOTICE
+
+> :warning: **IMPORTANT:** This gem is no longer maintained or supported. For the latest updates, please use our new gem at [crawlbase-ruby](https://github.com/crawlbase-source/crawlbase-ruby).
+
+---
+
 # ProxyCrawl
 
 Dependency free gem for scraping and crawling websites using the ProxyCrawl API.
